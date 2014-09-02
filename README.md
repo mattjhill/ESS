@@ -1,7 +1,7 @@
 ESS
 ===
 
-Extended SemiSeparable solver
+Extended SemiSeparable solver, which scales as O(N). The algorithm relies on embedding the semi-separable structure in an extended sparse matrix.
 
 To run the solver key in the following:
 
