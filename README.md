@@ -1,3 +1,5 @@
+<img style="float: right" src="https://github.com/sivaramambikasaran/ESS/raw/master/display.png" />
+
 ESS
 ===
 
