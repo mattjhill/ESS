@@ -23,7 +23,7 @@
 
 \usepackage[numbers,sort,compress]{natbib}
 
-\title{Generalized Rybicki Press scheme}
+\title{Generalized Rybicki Press algorithm}
 \subtitle{$\mathcal{O}(N)$ direct solver and determinant computation of general semi-separable matrices}
 
 % The thanks line in the title should be filled in if there is
@@ -47,7 +47,7 @@
 \maketitle
 
 \begin{abstract}
-This article discusses a more general and numerically stable Rybicki Press scheme, which enables inverting and computing determinants of covariance matrices, whose elements are sums of exponentials. The algorithm is true in exact arithmetic and relies on introducing new variables and corresponding equations, thereby converting the matrix into a banded matrix of larger size. Linear complexity banded algorithms for solving linear systems and computing determinants on the larger matrix enable linear complexity algorithms for the initial semi-separable matrix as well. Benchmarks provided illustrate the linear scaling of the algorithm.
+This article discusses a more general and numerically stable Rybicki Press algorithm, which enables inverting and computing determinants of covariance matrices, whose elements are sums of exponentials. The algorithm is true in exact arithmetic and relies on introducing new variables and corresponding equations, thereby converting the matrix into a banded matrix of larger size. Linear complexity banded algorithms for solving linear systems and computing determinants on the larger matrix enable linear complexity algorithms for the initial semi-separable matrix as well. Benchmarks provided illustrate the linear scaling of the algorithm.
 \end{abstract}
 
 \begin{keywords}
@@ -60,7 +60,7 @@ This article discusses a more general and numerically stable Rybicki Press schem
 
 \pagestyle{myheadings}
 \thispagestyle{plain}
-\markboth{$\mathcal{O}(N)$ direct solver and determinant computation of general semi-separable matrices}{Generalized Rybicki Press scheme}
+\markboth{$\mathcal{O}(N)$ direct solver and determinant computation of general semi-separable matrices}{Generalized Rybicki Press algorithm}
 
 \section{Introduction}
 Large dense covariance matrices arise in a wide range of applications in computational statistics and data analysis. Storing and performing numerical computations on such large dense matrices is computationally intractable. However, most of these large dense matrices are structured (either in exact arithmetic or finite arithmetic), which can be exploited to construct fast algorithms. One such class of data sparse matrices are semi-separable matrices, which have raised a lot of interest and have been studied in detail across a wide range of applications including integral equations~\cite{asplund1959finite,gohberg1984non,gesztesy2003modified} and computational statistics~\cite{roy1956inverting,roy1960evaluation,mustafi1967inverse,uppuluri1969inverse, greenberg1959matrix}. For a detailed bibliography on semi-separable matrices, the reader is referred to Vandebril et al.~\cite{vandebril2005bibliography}. Throughout the literature, there are slightly different definitions of semi-separable matrices. In this article, we will be working with the following definition:
@@ -80,21 +80,21 @@ The main contributions of this article include:
 \item
 A new $\mathcal{O}(N)$ direct solver for semi-separable matrices is obtained by embedding the semi-separable matrix into a larger banded matrix.
 \item
-The determinant of these semi-separable matrix is shown to equal to the determinant of the larger banded matrix, thereby enabling computing determinants of these semi-separable matrices at a computational cost of $\mathcal{O}(N)$. This is the first scheme for computing the determinants for a general semi-separable matrix.
+The determinant of these semi-separable matrix is shown to equal to the determinant of the larger banded matrix, thereby enabling computing determinants of these semi-separable matrices at a computational cost of $\mathcal{O}(N)$. This is the first algorithm for computing the determinants for a general semi-separable matrix.
 \item
-A numerically stable generalized Rybicki Press scheme is derived using these ideas. To be specific, fast direct solver and stable, fast determinant computation (both scaling as $\mathcal{O}(n)$) for covariance matrix of the form:
+A numerically stable generalized Rybicki Press algorithm is derived using these ideas. To be specific, fast direct solver and stable, fast determinant computation (both scaling as $\mathcal{O}(n)$) for covariance matrix of the form:
 \begin{align}
 A_{ij} = \sum_{l=1}^p \alpha_l \exp\left(-\beta_l \vert t_i - t_j \vert\right)
 \label{eqn_covariance_matrix}
 \end{align}
 where $i,j \in \{1,2,\ldots,n\}$, the points $t_i$ are distinct and are distributed on an interval. The covariance matrix in Equation~\eqref{eqn_covariance_matrix} is frequently encountered in computational statistics in the context of Continuous time AutoRegressive-Moving-Average (abbreviated as CARMA) models~\cite{brockwell2002introduction, brockwell2001levy, brockwell1994continuous}.
 \item
-Another advantage of this scheme from a practical view-point is that the scheme relies only on sparse linear algebra and thereby can easily use the existing mature sparse linear algebra libraries.
+Another advantage of this algorithm from a practical view-point is that the algorithm relies only on sparse linear algebra and thereby can easily use the existing mature sparse linear algebra libraries.
 \end{itemize}
 
 The algorithm proposed in this article relies on two key ideas: (i) The covariance matrix in Equation~\eqref{eqn_covariance_matrix} is a semi-separable matrix with semi-separable rank $p$; (ii) Fast algorithms for solving and computing determinants for such semi-separable matrices can be obtained by embedding the dense covariance matrix in a large sparse banded matrix. The article also discusses how to perform the entire procedure in a numerically stable fashion. The implementation is made available at \url{https://github.com/sivaramambikasaran/ESS}~\cite{ambikasaran2014ESS} under the MIT license.
 
-\textbf{Acknowledgements}: The author would like to thank Christopher S. Kochanek for initiating the conversation on generalized Rybicki Press scheme and David W. Hogg for putting in touch with Christopher S. Kochanek. The author was supported in part by the Applied Mathematical Sciences Program of the U.S. Department of Energy under Contract DEFGO288ER25053, Office of the Assistant Secretary of Defense for Research and Engineering and AFOSR under NSSEFF Program Award FA9550-10-1-0180.
+\textbf{Acknowledgements}: The author would like to thank Christopher S. Kochanek for initiating the conversation on generalized Rybicki Press algorithm and David W. Hogg for putting in touch with Christopher S. Kochanek. The author was supported in part by the Applied Mathematical Sciences Program of the U.S. Department of Energy under Contract DEFGO288ER25053, Office of the Assistant Secretary of Defense for Research and Engineering and AFOSR under NSSEFF Program Award FA9550-10-1-0180.
 
 %\section{Sparse embedding of semi-separable matrices}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -199,7 +199,7 @@ where $k \in \{2,\ldots,N-1\}$. Hence, we have a total of $3N-2$ variables and $
 
 \begin{figure}[!htbp]
 \begin{center}
-\includegraphics[scale=0.5]{./images/1termsemiseparable/1termsemiseparable.pdf}
+\includegraphics[scale=0.5]{./images/1termsemiseparable.pdf}
 \end{center}
 \begin{center}
 \includegraphics[scale=1]{./images/colorcode.pdf}
@@ -237,7 +237,7 @@ l_k^{(p)} & = U_k^T x_k + l_{k-1}^{(p)}
 where $k \in \{2,\ldots,N-1\}$. Hence, we now have $(2p+1)N-2p$ variables (this includes the $N$ $x_k$'s, $N-1$ vector variables $r_k^{(p)}$ and $l_k^{(p)}$ of length $p$) and $(2p+1)N-2p$ equations relating them. Therefore, we end up with a $((2p+1)N-2p) \times ((2p+1)N-2p)$ extended sparse matrix, whose bandwidth is $(2p+1)$. This is illustrated in Figure~\ref{fig_rankm_semiseparable} for $10 \times 10$ semi-separable matrix, whose semi-separable rank is $4$.
 \begin{figure}[!htbp]
 \begin{center}
-\includegraphics[scale=0.225]{./images/mtermsemiseparable/mtermsemiseparable_matrix.pdf}
+\includegraphics[scale=0.225]{./images/mtermsemiseparable_matrix.pdf}
 \end{center}
 \begin{center}
 \includegraphics[scale=1]{./images/colorcode.pdf}
@@ -366,9 +366,9 @@ U_b & V_b
 %										%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Reinterpretation of Rybicki Press scheme in terms of sparse embedding}
+\section{Reinterpretation of Rybicki Press algorithm in terms of sparse embedding}
 
-We will first naively reinterpret the Rybicki Press scheme in terms of the extended sparse matrix algebra. Recall that the Rybicki Press scheme inverts a correlation matrix $A$ given by Equation~\eqref{eqn_Rybicki_Press_matrix}.
+We will first naively reinterpret the Rybicki Press algorithm in terms of the extended sparse matrix algebra. Recall that the Rybicki Press algorithm inverts a correlation matrix $A$ given by Equation~\eqref{eqn_Rybicki_Press_matrix}.
 \begin{align}
 A(i,j) & = \exp\left(-\beta \lvert t_i - t_j \rvert\right)
 \label{eqn_Rybicki_Press_matrix}
@@ -444,7 +444,7 @@ Note that the sparsity pattern of the matrix is the same as before, which is to 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerically stable generalized Rybicki Press}
-The same idea carries over the generalized Rybicki Press scheme, i.e., if we consider a CARMA($p$,$q$) process which has the covariance matrix given by
+The same idea carries over the generalized Rybicki Press algorithm, i.e., if we consider a CARMA($p$,$q$) process which has the covariance matrix given by
 \begin{align}
 K(r) & =
 \begin{cases}
@@ -552,15 +552,15 @@ Solve time - Time taken to solve the linear system (once the factorization has b
 %%%%%%%%%%%%%%%%%
 \begin{figure}[!htbp]
 \subfigure[Assembly time versus system size]{
-\includegraphics{./images/results/assembly_versus_N.pdf}
+\includegraphics{./images/assembly_versus_N.pdf}
 }\subfigure[Factor time versus system size]{
-\includegraphics{./images/results/factor_versus_N.pdf}
+\includegraphics{./images/factor_versus_N.pdf}
 }
 \subfigure[Solve time versus system size]{
-\includegraphics{./images/results/solve_versus_N.pdf}
+\includegraphics{./images/solve_versus_N.pdf}
 }
 \subfigure[Error versus system size]{
-\includegraphics{./images/results/error_versus_N.pdf}
+\includegraphics{./images/error_versus_N.pdf}
 }
 \caption{Scaling of the algorithm with system size. From the benchmarks, it is clear that the computational cost for the fast algorithm scales as $\mathcal{O}(N)$ for assembly, factorization and solve stages, where $N$ is the number of unknowns. The maximum residual is less than $10^{-13}$ even for a system with million unknowns.}
 \label{figure_benchmark1}
@@ -579,15 +579,15 @@ In this benchmark, we illustrate the scaling of the time taken (assembly, factor
 %%%%%%%%%%%%%%%%%
 \begin{figure}[!htbp]
 \subfigure[Assembly time versus number of exponentials]{
-\includegraphics{./images/results/assembly_versus_m.pdf}
+\includegraphics{./images/assembly_versus_m.pdf}
 }\subfigure[Factor time versus number of exponentials]{
-\includegraphics{./images/results/factor_versus_m.pdf}
+\includegraphics{./images/factor_versus_m.pdf}
 }
 \subfigure[Solve time versus number of exponentials]{
-\includegraphics{./images/results/solve_versus_m.pdf}
+\includegraphics{./images/solve_versus_m.pdf}
 }
 \subfigure[Error versus number of exponentials]{
-\includegraphics{./images/results/error_versus_m.pdf}
+\includegraphics{./images/error_versus_m.pdf}
 }
 \caption{Scaling of the fast algorithm with the number of exponentials added. From the benchmarks, it is clear that the computational cost for the fast algorithm scales as $\mathcal{O}(p)$ for assembly and solve stages, while it scales as $\mathcal{O}(p^2)$ for the factorization stage, where $p$ is the number of exponentials (equivalently the semi-separable rank). The maximum residual is less than $10^{-13}$ almost always.}
 \end{figure}
@@ -598,7 +598,7 @@ In this benchmark, we illustrate the scaling of the time taken (assembly, factor
 %				%
 %%%%%%%%%%%%%%%%%
 \section{Conclusion}
-The article discusses a numerically stable, generalized Rybicki Press scheme, which relies on the fact that a semi-separable matrix can be embedded into a larger banded matrix. This enables $\mathcal{O}(N)$ inversion and determinant computation of covariance matrices, whose entries are sums of exponentials. This publication also serves to formally announce the release of the implementation of the extended sparse semi-separable factorization and the generalized Rybicki Press scheme. The implementation is in C++ and is made available at \url{https://github.com/sivaramambikasaran/ESS}~\cite{ambikasaran2014ESS} under the MIT license.
+The article discusses a numerically stable, generalized Rybicki Press algorithm, which relies on the fact that a semi-separable matrix can be embedded into a larger banded matrix. This enables $\mathcal{O}(N)$ inversion and determinant computation of covariance matrices, whose entries are sums of exponentials. This publication also serves to formally announce the release of the implementation of the extended sparse semi-separable factorization and the generalized Rybicki Press algorithm. The implementation is in C++ and is made available at \url{https://github.com/sivaramambikasaran/ESS}~\cite{ambikasaran2014ESS} under the MIT license.
 
 \FloatBarrier
 
@@ -609,7 +609,127 @@ The article discusses a numerically stable, generalized Rybicki Press scheme, wh
 %%%%%%%%%%%%%%%%%%%%%
 
 \newpage
-\bibliography{biblio.bib}
-\bibliographystyle{unsrt}
+% \bibliography{biblio}
+% \bibliographystyle{unsrt}
+\begin{thebibliography}{10}
+
+\bibitem{asplund1959finite}
+S.~O. Asplund.
+\newblock Finite boundary value problems solved by {G}reen's matrix.
+\newblock {\em Mathematica Scandinavica}, 7:49--56, 1959.
+
+\bibitem{gohberg1984non}
+I~Gohberg, MA~Kaashoek, and F~Van~Schagen.
+\newblock Non-compact integral operators with semi-separable kernels and their
+  discrete analogues: {I}nversion and {F}redholm properties.
+\newblock {\em Integral Equations and Operator Theory}, 7(5):642--703, 1984.
+
+\bibitem{gesztesy2003modified}
+Fritz Gesztesy and Konstantin~A Makarov.
+\newblock Modified {F}redholm determinants for operators with matrix-valued
+  semi-separable integral kernels revisited.
+\newblock {\em Integral Equations and Operator Theory}, 47(4):457--497, 2003.
+
+\bibitem{roy1956inverting}
+SN~Roy and AE~Sarhan.
+\newblock On inverting a class of patterned matrices.
+\newblock {\em Biometrika}, pages 227--231, 1956.
+
+\bibitem{roy1960evaluation}
+SN~Roy, BG~Greenberg, and AE~Sarhan.
+\newblock Evaluation of determinants, characteristic equations and their roots
+  for a class of patterned matrices.
+\newblock {\em Journal of the Royal Statistical Society. Series B
+  (Methodological)}, pages 348--359, 1960.
+
+\bibitem{mustafi1967inverse}
+Chandan~K Mustafi.
+\newblock The inverse of a certain matrix, with an application.
+\newblock {\em The Annals of Mathematical Statistics}, pages 1289--1292, 1967.
+
+\bibitem{uppuluri1969inverse}
+VR~Rao Uppuluri and JA~Carpenter.
+\newblock The inverse of a matrix occurring in first-order moving-average
+  models.
+\newblock {\em Sankhy{\=a}: The Indian Journal of Statistics, Series A}, pages
+  79--82, 1969.
+
+\bibitem{greenberg1959matrix}
+G~Greenberg and AHMED~E Sarhan.
+\newblock Matrix inversion, its interest and application in analysis of data.
+\newblock {\em Journal of the American Statistical Association}, pages
+  755--766, 1959.
+
+\bibitem{vandebril2005bibliography}
+Raf Vandebril, Marc Van~Barel, Gene Golub, and Nicola Mastronardi.
+\newblock A bibliography on semi-separable matrices*.
+\newblock {\em Calcolo}, 42(3-4):249--270, 2005.
+
+\bibitem{eidelman2002modification}
+Y~Eidelman and I~Gohberg.
+\newblock A modification of the {D}ewilde--van der {V}een method for inversion
+  of finite structured matrices.
+\newblock {\em Linear Algebra and its Applications}, 343:419--450, 2002.
+
+\bibitem{van2004two}
+Ellen Van~Camp, Nicola Mastronardi, and Marc Van~Barel.
+\newblock Two fast algorithms for solving diagonal-plus-semi-separable linear
+  systems.
+\newblock {\em Journal of Computational and Applied Mathematics}, 164:731--747,
+  2004.
+
+\bibitem{eidelman1997inversion}
+Y~Eidelman and I~Gohberg.
+\newblock Inversion formulas and linear complexity algorithm for diagonal plus
+  semi-separable matrices.
+\newblock {\em Computers \& Mathematics with Applications}, 33(4):69--79, 1997.
+
+\bibitem{gohberg1985linear}
+I~Gohberg, T~Kailath, and I~Koltracht.
+\newblock Linear complexity algorithms for semi-separable matrices.
+\newblock {\em Integral Equations and Operator Theory}, 8(6):780--804, 1985.
+
+\bibitem{jain2010n}
+Jitesh Jain, Hong Li, Cheng-Kok Koh, and Venkataramanan Balakrishnan.
+\newblock O(n) algorithms for banded plus semi-separable matrices.
+\newblock In {\em Numerical Methods for Structured Matrices and Applications},
+  pages 347--358. Springer, 2010.
+
+\bibitem{chandrasekaran2003fast}
+Shiv Chandrasekaran and Ming Gu.
+\newblock Fast and stable algorithms for banded plus semi-separable systems of
+  linear equations.
+\newblock {\em SIAM Journal on Matrix Analysis and Applications},
+  25(2):373--384, 2003.
+
+\bibitem{brockwell2002introduction}
+Peter~J Brockwell and Richard~A Davis.
+\newblock {\em Introduction to time series and forecasting}, volume~1.
+\newblock Taylor \& Francis, 2002.
+
+\bibitem{brockwell2001levy}
+Peter~J Brockwell.
+\newblock L{\'e}vy-driven {CARMA} processes.
+\newblock {\em Annals of the Institute of Statistical Mathematics},
+  53(1):113--124, 2001.
+
+\bibitem{brockwell1994continuous}
+Peter~J Brockwell.
+\newblock On continuous-time threshold {ARMA} processes.
+\newblock {\em Journal of Statistical Planning and Inference}, 39(2):291--303,
+  1994.
+
+\bibitem{ambikasaran2014ESS}
+Sivaram Ambikasaran.
+\newblock {ESS}.
+\newblock https://github.com/sivaramambikasaran/ESS, 2014.
+
+\bibitem{eigenweb}
+Ga\"{e}l Guennebaud, Beno\^{i}t Jacob, et~al.
+\newblock Eigen v3.
+\newblock http://eigen.tuxfamily.org, 2010.
+
+\end{thebibliography}
+
 
 \end{document}

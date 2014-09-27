@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  26 SEP 2014 20:43
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  26 SEP 2014 21:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -734,13 +734,12 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
-<./images/1termsemiseparable/1termsemiseparable.pdf, id=28, 626.36009pt x 626.3
-6009pt>
-File: ./images/1termsemiseparable/1termsemiseparable.pdf Graphic file (type pdf
-)
- <use ./images/1termsemiseparable/1termsemiseparable.pdf>
-Package pdftex.def Info: ./images/1termsemiseparable/1termsemiseparable.pdf use
-d on input line 202.
+<./images/1termsemiseparable.pdf, id=28, 626.36009pt x 626.36009pt>
+File: ./images/1termsemiseparable.pdf Graphic file (type pdf)
+
+<use ./images/1termsemiseparable.pdf>
+Package pdftex.def Info: ./images/1termsemiseparable.pdf used on input line 202
+.
 (pdftex.def)             Requested size: 313.17928pt x 313.17928pt.
 
 <./images/colorcode.pdf, id=29, 315.00989pt x 28.8528pt>
@@ -750,26 +749,23 @@ File: ./images/colorcode.pdf Graphic file (type pdf)
 Package pdftex.def Info: ./images/colorcode.pdf used on input line 205.
 (pdftex.def)             Requested size: 315.00911pt x 28.85272pt.
 
-<./images/mtermsemiseparable/mtermsemiseparable_matrix.pdf, id=30, 2333.52492pt
- x 2333.52492pt>
-File: ./images/mtermsemiseparable/mtermsemiseparable_matrix.pdf Graphic file (t
-ype pdf)
+<./images/mtermsemiseparable_matrix.pdf, id=30, 2333.52492pt x 2333.52492pt>
+File: ./images/mtermsemiseparable_matrix.pdf Graphic file (type pdf)
 
-<use ./images/mtermsemiseparable/mtermsemiseparable_matrix.pdf>
-Package pdftex.def Info: ./images/mtermsemiseparable/mtermsemiseparable_matrix.
-pdf used on input line 240.
+<use ./images/mtermsemiseparable_matrix.pdf>
+Package pdftex.def Info: ./images/mtermsemiseparable_matrix.pdf used on input l
+ine 240.
 (pdftex.def)             Requested size: 525.05606pt x 525.05606pt.
 File: ./images/colorcode.pdf Graphic file (type pdf)
-
-<use ./images/colorcode.pdf>
+ <use ./images/colorcode.pdf>
 Package pdftex.def Info: ./images/colorcode.pdf used on input line 243.
 (pdftex.def)             Requested size: 315.00911pt x 28.85272pt.
- [3]
+
+[3]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [4 <./images/1termsemiseparable/1termsemiseparable.pdf> <./images/colorcode.pd
-f>]
-[5 <./images/mtermsemiseparable/mtermsemiseparable_matrix.pdf>] [6]
+ [4 <./images/1termsemiseparable.pdf> <./images/colorcode.pdf>] [5 <./images/mt
+ermsemiseparable_matrix.pdf>] [6]
 Overfull \hbox (32.5385pt too wide) in paragraph at lines 435--435
 [] 
  []
@@ -779,88 +775,81 @@ Overfull \hbox (16.44748pt too wide) in paragraph at lines 506--537
  [] 
  []
 
-<./images/results/assembly_versus_N.pdf, id=76, 248.934pt x 200.05038pt>
-File: ./images/results/assembly_versus_N.pdf Graphic file (type pdf)
+<./images/assembly_versus_N.pdf, id=76, 248.934pt x 200.05038pt>
+File: ./images/assembly_versus_N.pdf Graphic file (type pdf)
 
-<use ./images/results/assembly_versus_N.pdf>
-Package pdftex.def Info: ./images/results/assembly_versus_N.pdf used on input l
-ine 556.
+<use ./images/assembly_versus_N.pdf>
+Package pdftex.def Info: ./images/assembly_versus_N.pdf used on input line 556.
+
 (pdftex.def)             Requested size: 248.9334pt x 200.04988pt.
 
-<./images/results/factor_versus_N.pdf, id=77, 246.98975pt x 200.05038pt>
-File: ./images/results/factor_versus_N.pdf Graphic file (type pdf)
+<./images/factor_versus_N.pdf, id=77, 246.98975pt x 200.05038pt>
+File: ./images/factor_versus_N.pdf Graphic file (type pdf)
 
-<use ./images/results/factor_versus_N.pdf>
-Package pdftex.def Info: ./images/results/factor_versus_N.pdf used on input lin
-e 558.
+<use ./images/factor_versus_N.pdf>
+Package pdftex.def Info: ./images/factor_versus_N.pdf used on input line 558.
 (pdftex.def)             Requested size: 246.98914pt x 200.04988pt.
 
-<./images/results/solve_versus_N.pdf, id=78, 246.98975pt x 200.05038pt>
-File: ./images/results/solve_versus_N.pdf Graphic file (type pdf)
+<./images/solve_versus_N.pdf, id=78, 246.98975pt x 200.05038pt>
+File: ./images/solve_versus_N.pdf Graphic file (type pdf)
 
-<use ./images/results/solve_versus_N.pdf>
-Package pdftex.def Info: ./images/results/solve_versus_N.pdf used on input line
- 561.
+<use ./images/solve_versus_N.pdf>
+Package pdftex.def Info: ./images/solve_versus_N.pdf used on input line 561.
 (pdftex.def)             Requested size: 246.98914pt x 200.04988pt.
 
-<./images/results/error_versus_N.pdf, id=79, 254.03105pt x 200.04637pt>
-File: ./images/results/error_versus_N.pdf Graphic file (type pdf)
+<./images/error_versus_N.pdf, id=79, 254.03105pt x 200.04637pt>
+File: ./images/error_versus_N.pdf Graphic file (type pdf)
 
-<use ./images/results/error_versus_N.pdf>
-Package pdftex.def Info: ./images/results/error_versus_N.pdf used on input line
- 564.
+<use ./images/error_versus_N.pdf>
+Package pdftex.def Info: ./images/error_versus_N.pdf used on input line 564.
 (pdftex.def)             Requested size: 254.03043pt x 200.04587pt.
 
 Underfull \hbox (badness 10000) in paragraph at lines 556--565
 [][][]
  []
 
-<./images/results/assembly_versus_m.pdf, id=80, 246.69365pt x 191.26657pt>
-File: ./images/results/assembly_versus_m.pdf Graphic file (type pdf)
+<./images/assembly_versus_m.pdf, id=80, 246.69365pt x 191.26657pt>
+File: ./images/assembly_versus_m.pdf Graphic file (type pdf)
 
-<use ./images/results/assembly_versus_m.pdf>
-Package pdftex.def Info: ./images/results/assembly_versus_m.pdf used on input l
-ine 583.
+<use ./images/assembly_versus_m.pdf>
+Package pdftex.def Info: ./images/assembly_versus_m.pdf used on input line 583.
+
 (pdftex.def)             Requested size: 246.69304pt x 191.26608pt.
 
-<./images/results/factor_versus_m.pdf, id=81, 244.74939pt x 191.2736pt>
-File: ./images/results/factor_versus_m.pdf Graphic file (type pdf)
+<./images/factor_versus_m.pdf, id=81, 244.74939pt x 191.2736pt>
+File: ./images/factor_versus_m.pdf Graphic file (type pdf)
 
-<use ./images/results/factor_versus_m.pdf>
-Package pdftex.def Info: ./images/results/factor_versus_m.pdf used on input lin
-e 585.
+<use ./images/factor_versus_m.pdf>
+Package pdftex.def Info: ./images/factor_versus_m.pdf used on input line 585.
 (pdftex.def)             Requested size: 244.74878pt x 191.27312pt.
 
-<./images/results/solve_versus_m.pdf, id=82, 244.74939pt x 191.26958pt>
-File: ./images/results/solve_versus_m.pdf Graphic file (type pdf)
+<./images/solve_versus_m.pdf, id=82, 244.74939pt x 191.26958pt>
+File: ./images/solve_versus_m.pdf Graphic file (type pdf)
 
-<use ./images/results/solve_versus_m.pdf>
-Package pdftex.def Info: ./images/results/solve_versus_m.pdf used on input line
- 588.
+<use ./images/solve_versus_m.pdf>
+Package pdftex.def Info: ./images/solve_versus_m.pdf used on input line 588.
 (pdftex.def)             Requested size: 244.74878pt x 191.26909pt.
 
-<./images/results/error_versus_m.pdf, id=83, 251.7907pt x 198.46146pt>
-File: ./images/results/error_versus_m.pdf Graphic file (type pdf)
+<./images/error_versus_m.pdf, id=83, 251.7907pt x 198.46146pt>
+File: ./images/error_versus_m.pdf Graphic file (type pdf)
 
-<use ./images/results/error_versus_m.pdf>
-Package pdftex.def Info: ./images/results/error_versus_m.pdf used on input line
- 591.
+<use ./images/error_versus_m.pdf>
+Package pdftex.def Info: ./images/error_versus_m.pdf used on input line 591.
 (pdftex.def)             Requested size: 251.79007pt x 198.46095pt.
 
 Underfull \hbox (badness 10000) in paragraph at lines 583--592
 [][][]
  []
 
-[8] [9] [10 <./images/results/assembly_versus_N.pdf> <./images/results/factor_v
-ersus_N.pdf> <./images/results/solve_versus_N.pdf> <./images/results/error_vers
-us_N.pdf>] [11 <./images/results/assembly_versus_m.pdf> <./images/results/facto
-r_versus_m.pdf> <./images/results/solve_versus_m.pdf> <./images/results/error_v
-ersus_m.pdf>] (./ESS.bbl) [12
+[8] [9] [10 <./images/assembly_versus_N.pdf> <./images/factor_versus_N.pdf> <./
+images/solve_versus_N.pdf> <./images/error_versus_N.pdf>] [11 <./images/assembl
+y_versus_m.pdf> <./images/factor_versus_m.pdf> <./images/solve_versus_m.pdf> <.
+/images/error_versus_m.pdf>] [12
 
 ] (./ESS.aux) ) 
 Here is how much of TeX's memory you used:
- 22078 strings out of 493117
- 544565 string characters out of 6135433
+ 22072 strings out of 493117
+ 544064 string characters out of 6135433
  714811 words of memory out of 5000000
  25121 multiletter control sequences out of 15000+600000
  11222 words of font info for 43 fonts, out of 8000000 for 9000
@@ -885,7 +874,7 @@ texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/t
 exlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb></usr/local/tex
 live/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texl
 ive/2014/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on ESS.pdf (12 pages, 317156 bytes).
+Output written on ESS.pdf (12 pages, 317314 bytes).
 PDF statistics:
  287 PDF objects out of 1000 (max. 8388607)
  240 compressed objects within 3 object streams
