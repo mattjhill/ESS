@@ -49,7 +49,6 @@ int main(int argc, char* argv[]) {
 
 	Eigen::VectorXd rhs=	Eigen:: VectorXd::Random(N);
 	Eigen::VectorXd solution;
-
 	double CPS	=	CLOCKS_PER_SEC;
 	clock_t start, end;
 
@@ -101,7 +100,7 @@ int main(int argc, char* argv[]) {
 	/************************/
 
 
-	Eigen::VectorXd solutionFast;
+	Eigen::VectorXd solutionFast, solex;
 	double assembleFastTime, factorFastTime, solveFastTime;
 
 	//	Set up the ESS class.
@@ -125,7 +124,7 @@ int main(int argc, char* argv[]) {
 
 	//	Solve the linear system
 	start			=	clock();
-	matrix.obtain_Solution(rhs, solutionFast);
+	matrix.obtain_Solution(rhs, solutionFast, solex);
 	end				=	clock();
 	solveFastTime	=	(end-start)/CPS;
 	std::cout << std::setw(30) << "Solve time: " << std::setw(10) << solveFastTime << std::endl << std::endl;
@@ -137,7 +136,9 @@ int main(int argc, char* argv[]) {
 	/************************/
 
 	//	Error in the computed solution
+	double error 	=	matrix.obtain_Error(rhs, solex);
+	std::cout << std::endl << "Maximum of ||Ax-b|| is: " << error << std::endl;
 	if (c=='y') {
-		std::cout << std::endl << "Error in solution: "<< (solutionFast-solution).cwiseAbs().maxCoeff() << std::endl << std::endl;		
+		std::cout << std::endl << "Error in solution: "<< (solutionFast-solution).cwiseAbs().maxCoeff() << std::endl << std::endl;
 	}
 }

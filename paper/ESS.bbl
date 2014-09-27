@@ -1,0 +1,119 @@
+\begin{thebibliography}{10}
+
+\bibitem{ambikasaran2014ESS}
+Sivaram Ambikasaran.
+\newblock {ESS}.
+\newblock https://github.com/sivaramambikasaran/ESS, 2014.
+
+\bibitem{asplund1959finite}
+S.~O. Asplund.
+\newblock Finite boundary value problems solved by {G}reen's matrix.
+\newblock {\em Mathematica Scandinavica}, 7:49--56, 1959.
+
+\bibitem{brockwell1994continuous}
+Peter~J Brockwell.
+\newblock On continuous-time threshold {ARMA} processes.
+\newblock {\em Journal of Statistical Planning and Inference}, 39(2):291--303,
+  1994.
+
+\bibitem{brockwell2001levy}
+Peter~J Brockwell.
+\newblock L{\'e}vy-driven {CARMA} processes.
+\newblock {\em Annals of the Institute of Statistical Mathematics},
+  53(1):113--124, 2001.
+
+\bibitem{brockwell2002introduction}
+Peter~J Brockwell and Richard~A Davis.
+\newblock {\em Introduction to time series and forecasting}, volume~1.
+\newblock Taylor \& Francis, 2002.
+
+\bibitem{chandrasekaran2003fast}
+Shiv Chandrasekaran and Ming Gu.
+\newblock Fast and stable algorithms for banded plus semi-separable systems of
+  linear equations.
+\newblock {\em SIAM Journal on Matrix Analysis and Applications},
+  25(2):373--384, 2003.
+
+\bibitem{eidelman1997inversion}
+Y~Eidelman and I~Gohberg.
+\newblock Inversion formulas and linear complexity algorithm for diagonal plus
+  semi-separable matrices.
+\newblock {\em Computers \& Mathematics with Applications}, 33(4):69--79, 1997.
+
+\bibitem{eidelman2002modification}
+Y~Eidelman and I~Gohberg.
+\newblock A modification of the {D}ewilde--van der {V}een method for inversion
+  of finite structured matrices.
+\newblock {\em Linear Algebra and its Applications}, 343:419--450, 2002.
+
+\bibitem{gesztesy2003modified}
+Fritz Gesztesy and Konstantin~A Makarov.
+\newblock Modified {F}redholm determinants for operators with matrix-valued
+  semi-separable integral kernels revisited.
+\newblock {\em Integral Equations and Operator Theory}, 47(4):457--497, 2003.
+
+\bibitem{gohberg1984non}
+I~Gohberg, MA~Kaashoek, and F~Van~Schagen.
+\newblock Non-compact integral operators with semi-separable kernels and their
+  discrete analogues: {I}nversion and {F}redholm properties.
+\newblock {\em Integral Equations and Operator Theory}, 7(5):642--703, 1984.
+
+\bibitem{gohberg1985linear}
+I~Gohberg, T~Kailath, and I~Koltracht.
+\newblock Linear complexity algorithms for semi-separable matrices.
+\newblock {\em Integral Equations and Operator Theory}, 8(6):780--804, 1985.
+
+\bibitem{greenberg1959matrix}
+G~Greenberg and AHMED~E Sarhan.
+\newblock Matrix inversion, its interest and application in analysis of data.
+\newblock {\em Journal of the American Statistical Association}, pages
+  755--766, 1959.
+
+\bibitem{eigenweb}
+Ga\"{e}l Guennebaud, Beno\^{i}t Jacob, et~al.
+\newblock Eigen v3.
+\newblock http://eigen.tuxfamily.org, 2010.
+
+\bibitem{jain2010n}
+Jitesh Jain, Hong Li, Cheng-Kok Koh, and Venkataramanan Balakrishnan.
+\newblock O(n) algorithms for banded plus semi-separable matrices.
+\newblock In {\em Numerical Methods for Structured Matrices and Applications},
+  pages 347--358. Springer, 2010.
+
+\bibitem{mustafi1967inverse}
+Chandan~K Mustafi.
+\newblock The inverse of a certain matrix, with an application.
+\newblock {\em The Annals of Mathematical Statistics}, pages 1289--1292, 1967.
+
+\bibitem{roy1960evaluation}
+SN~Roy, BG~Greenberg, and AE~Sarhan.
+\newblock Evaluation of determinants, characteristic equations and their roots
+  for a class of patterned matrices.
+\newblock {\em Journal of the Royal Statistical Society. Series B
+  (Methodological)}, pages 348--359, 1960.
+
+\bibitem{roy1956inverting}
+SN~Roy and AE~Sarhan.
+\newblock On inverting a class of patterned matrices.
+\newblock {\em Biometrika}, pages 227--231, 1956.
+
+\bibitem{uppuluri1969inverse}
+VR~Rao Uppuluri and JA~Carpenter.
+\newblock The inverse of a matrix occurring in first-order moving-average
+  models.
+\newblock {\em Sankhy{\=a}: The Indian Journal of Statistics, Series A}, pages
+  79--82, 1969.
+
+\bibitem{van2004two}
+Ellen Van~Camp, Nicola Mastronardi, and Marc Van~Barel.
+\newblock Two fast algorithms for solving diagonal-plus-semi-separable linear
+  systems.
+\newblock {\em Journal of Computational and Applied Mathematics}, 164:731--747,
+  2004.
+
+\bibitem{vandebril2005bibliography}
+Raf Vandebril, Marc Van~Barel, Gene Golub, and Nicola Mastronardi.
+\newblock A bibliography on semi-separable matrices*.
+\newblock {\em Calcolo}, 42(3-4):249--270, 2005.
+
+\end{thebibliography}

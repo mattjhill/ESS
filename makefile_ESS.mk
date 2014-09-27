@@ -14,7 +14,7 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -rf *.out *.0 ESS
+	rm -rf *.out *.o ESS
 
 tar:
 	tar -zcvf ESS.tar.gz ./makefile.mk ./ESS.hpp ./testESS.cpp ./README.md ./LICENSE.md

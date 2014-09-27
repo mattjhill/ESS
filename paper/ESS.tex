@@ -1,0 +1,615 @@
+\documentclass[final,leqno]{siamltex}
+
+%\usepackage{algorithm}% http://ctan.org/pkg/algorithms
+%\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+\usepackage{amsmath, amssymb}
+\usepackage[table]{xcolor}
+\usepackage{placeins}
+\usepackage{url}
+%\usepackage{setspace}
+
+\usepackage{tikz,pgfplots}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{placeins}
+\usepackage[left=0.5in, right=0.5in, top=1.5in, bottom=1.5in]{geometry}
+% some definitions of bold math italics to make typing easier.
+% They are used in the corollary.
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{defn}[theorem]{Defn}
+\newtheorem{prop}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{ex}{Example}
+
+\usepackage[numbers,sort,compress]{natbib}
+
+\title{Generalized Rybicki Press scheme}
+\subtitle{$\mathcal{O}(N)$ direct solver and determinant computation of general semi-separable matrices}
+
+% The thanks line in the title should be filled in if there is
+% any support acknowledgement for the overall work to be included
+% This \thanks is also used for the received by date info, but
+% authors are not expected to provide this.
+
+\author{Sivaram Ambikasaran}
+
+\newtheorem{lem}{Lemma}
+\newtheorem{cor}{Corollary}
+
+\definecolor{mycyan}{rgb}{0,0.95,0.95}
+
+\pgfplotsset{compat=newest}
+
+%%%%\onehalfspacing
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This article discusses a more general and numerically stable Rybicki Press scheme, which enables inverting and computing determinants of covariance matrices, whose elements are sums of exponentials. The algorithm is true in exact arithmetic and relies on introducing new variables and corresponding equations, thereby converting the matrix into a banded matrix of larger size. Linear complexity banded algorithms for solving linear systems and computing determinants on the larger matrix enable linear complexity algorithms for the initial semi-separable matrix as well. Benchmarks provided illustrate the linear scaling of the algorithm.
+\end{abstract}
+
+\begin{keywords}
+\end{keywords}
+
+
+\begin{AMS}
+15A23, 15A15, 15A09
+\end{AMS}
+
+\pagestyle{myheadings}
+\thispagestyle{plain}
+\markboth{$\mathcal{O}(N)$ direct solver and determinant computation of general semi-separable matrices}{Generalized Rybicki Press scheme}
+
+\section{Introduction}
+Large dense covariance matrices arise in a wide range of applications in computational statistics and data analysis. Storing and performing numerical computations on such large dense matrices is computationally intractable. However, most of these large dense matrices are structured (either in exact arithmetic or finite arithmetic), which can be exploited to construct fast algorithms. One such class of data sparse matrices are semi-separable matrices, which have raised a lot of interest and have been studied in detail across a wide range of applications including integral equations~\cite{asplund1959finite,gohberg1984non,gesztesy2003modified} and computational statistics~\cite{roy1956inverting,roy1960evaluation,mustafi1967inverse,uppuluri1969inverse, greenberg1959matrix}. For a detailed bibliography on semi-separable matrices, the reader is referred to Vandebril et al.~\cite{vandebril2005bibliography}. Throughout the literature, there are slightly different definitions of semi-separable matrices. In this article, we will be working with the following definition:
+\begin{defn}
+$A \in \mathbb{R}^{N \times N}$ is termed a semi-separable matrix with semi-separable rank $p$, if it can be written as
+\begin{align}
+A & = D + \text{triu}(B_p) + \text{tril}(C_p)
+\end{align}
+where $D$ is a diagonal matrix, $B_p, C_p$ are rank $p$ matrices, $\text{triu}(B_p)$ denotes the upper triangular part of $B_p$ and $\text{tril}(C_p)$ denotes the lower triangular part of $C_p$.
+\end{defn}
+
+Fast algorithms for solving semi-separable linear systems exists and the reader is referred to some of these references~\cite{eidelman2002modification,van2004two,eidelman1997inversion,gohberg1985linear, jain2010n,chandrasekaran2003fast} and the references therein. In this article, we propose a new $\mathcal{O}(N)$ direct solver and determinant computation for semi-separable matrices.
+
+The main contributions of this article include:
+
+\begin{itemize}
+\item
+A new $\mathcal{O}(N)$ direct solver for semi-separable matrices is obtained by embedding the semi-separable matrix into a larger banded matrix.
+\item
+The determinant of these semi-separable matrix is shown to equal to the determinant of the larger banded matrix, thereby enabling computing determinants of these semi-separable matrices at a computational cost of $\mathcal{O}(N)$. This is the first scheme for computing the determinants for a general semi-separable matrix.
+\item
+A numerically stable generalized Rybicki Press scheme is derived using these ideas. To be specific, fast direct solver and stable, fast determinant computation (both scaling as $\mathcal{O}(n)$) for covariance matrix of the form:
+\begin{align}
+A_{ij} = \sum_{l=1}^p \alpha_l \exp\left(-\beta_l \vert t_i - t_j \vert\right)
+\label{eqn_covariance_matrix}
+\end{align}
+where $i,j \in \{1,2,\ldots,n\}$, the points $t_i$ are distinct and are distributed on an interval. The covariance matrix in Equation~\eqref{eqn_covariance_matrix} is frequently encountered in computational statistics in the context of Continuous time AutoRegressive-Moving-Average (abbreviated as CARMA) models~\cite{brockwell2002introduction, brockwell2001levy, brockwell1994continuous}.
+\item
+Another advantage of this scheme from a practical view-point is that the scheme relies only on sparse linear algebra and thereby can easily use the existing mature sparse linear algebra libraries.
+\end{itemize}
+
+The algorithm proposed in this article relies on two key ideas: (i) The covariance matrix in Equation~\eqref{eqn_covariance_matrix} is a semi-separable matrix with semi-separable rank $p$; (ii) Fast algorithms for solving and computing determinants for such semi-separable matrices can be obtained by embedding the dense covariance matrix in a large sparse banded matrix. The article also discusses how to perform the entire procedure in a numerically stable fashion. The implementation is made available at \url{https://github.com/sivaramambikasaran/ESS}~\cite{ambikasaran2014ESS} under the MIT license.
+
+\textbf{Acknowledgements}: The author would like to thank Christopher S. Kochanek for initiating the conversation on generalized Rybicki Press scheme and David W. Hogg for putting in touch with Christopher S. Kochanek. The author was supported in part by the Applied Mathematical Sciences Program of the U.S. Department of Energy under Contract DEFGO288ER25053, Office of the Assistant Secretary of Defense for Research and Engineering and AFOSR under NSSEFF Program Award FA9550-10-1-0180.
+
+%\section{Sparse embedding of semi-separable matrices}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%												%
+%		SECTION: RANK 1 SEMI-SEPARABLE			%
+%												%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Sparse embedding of semi-separable matrix with semi-separable rank $1$}
+To motivate the general idea, we will first look at the sparse embedding for a $4 \times 4$ semi-separable matrix, whose semi-separable rank is $1$. The matrix $A$ is as shown in Equation~\eqref{eqn_first_example}.
+
+\begin{align}
+A & =
+\begin{bmatrix}
+a_{11} & u_1v_2 & u_1v_3 & u_1v_4\\
+u_1v_2 & a_{22} & u_2v_3 & u_2v_4\\
+u_1v_3 & u_2v_3 & a_{33} & u_3v_4\\
+u_1v_4 & u_2v_4 & u_3v_4 & a_{44}\\
+\end{bmatrix}
+\label{eqn_first_example}
+\end{align}
+And the corresponding linear system is $Ax=b$, where $b=\begin{bmatrix} b_1& b_2& b_3& b_4 \end{bmatrix}^T$
+
+Introduce the following variables:
+\begin{align}
+r_4 & = v_4x_4\\
+r_3 & = v_3x_3 + r_4\\
+r_2 & = v_2x_2 + r_3
+\end{align}
+\begin{align}
+l_1 & = u_1x_1\\
+l_2 & = u_2x_2 + l_1\\
+l_3 & = u_3x_3 + l_2
+\end{align}
+
+Introducing the variables the linear system $Ax=b$ is now of the form
+\begin{align}
+a_{11}x_1 + u_1r_2 & = b_1\\
+v_2 l_1 + a_{22}x_2 + u_2r_3 & = b_2\\
+v_3 l_2 + a_{33}x_3 + u_3r_4 & = b_3\\
+v_4 l_3 + a_{44}x_4 & = b_4
+\end{align}
+
+The extended linear system (after appropriate ordering of equations and unknowns) is then of the form
+\begin{align}
+\begin{bmatrix}
+a_{11} & u_1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+u_1 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+0 & -1 & 0 & v_2 & 1 & 0 & 0 & 0 & 0 & 0\\
+0 & 0 & v_2 & a_{22} & u_2 & 0 & 0 & 0 & 0 & 0\\
+0 & 0 & 1 & u_2 & 0 & -1 & 0 & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & -1 & 0 & v_3 & 1 & 0 & 0\\
+0 & 0 & 0 & 0 & 0 & v_3 & a_{33} & u_3 & 0 & 0\\
+0 & 0 & 0 & 0 & 0 & 1 & u_{3} & 0 & -1 & 0\\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & v_4\\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & v_4 & a_{44}\\
+\end{bmatrix}
+\begin{bmatrix}
+x_1\\
+r_2\\
+l_1\\
+x_2\\
+r_3\\
+l_2\\
+x_3\\
+r_4\\
+l_3\\
+x_4
+\end{bmatrix}
+& =
+\begin{bmatrix}
+b_1\\
+0\\
+0\\
+b_2\\
+0\\
+0\\
+b_3\\
+0\\
+0\\
+b_4
+\end{bmatrix}
+\label{eqn_extended_example}
+\end{align}
+Note that Equation~\eqref{eqn_extended_example} is a banded matrix of bandwidth $2$ and has a sparsity structure even within the band. In general, let $A$ be an $N \times N$ semi-separable matrix, with the semi-separability rank $1$ as written in Equation~\eqref{eqn_generic_semiseparable_rank_1}.
+\begin{align}
+A(i,j) & =
+\begin{cases}
+a_{ii} & \text{ if }i=j\\
+u_j v_i & \text{ if }i> j\\
+u_i v_j & \text{ if }i< j\\
+\end{cases}
+\label{eqn_generic_semiseparable_rank_1}
+\end{align}
+where $i,j \in \{1,2,\ldots,N\}$. One would then need to add the variables $r_2,r_3,\ldots,r_N$ and $l_1,l_2,\ldots,l_{N-1}$, where $r_N = v_N x_N$, $l_1 = u_1x_1$ and
+\begin{align}
+r_k & = v_kx_k + r_{k+1}\\
+l_k & = u_kx_k + l_{k-1}
+\end{align}
+where $k \in \{2,\ldots,N-1\}$. Hence, we have a total of $3N-2$ variables and $3N-2$ equations. Therefore, the extended matrix will be a $(3N-2) \times (3N-2)$ banded matrix, whose bandwidth is $2$. This is illustrated pictorially for a $8 \times 8$ matrix in Figure~\ref{fig_rank1_semiseparable}.
+
+\begin{figure}[!htbp]
+\begin{center}
+\includegraphics[scale=0.5]{./images/1termsemiseparable/1termsemiseparable.pdf}
+\end{center}
+\begin{center}
+\includegraphics[scale=1]{./images/colorcode.pdf}
+\end{center}
+\caption{Pictorial description of the extended sparse matrix obtained from a rank $1$ semi-separable matrix where $N=8$. The color code is as follows: }
+\label{fig_rank1_semiseparable}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%												%
+%		SECTION: GENERAL SEMI-SEPARABLE			%
+%												%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Sparse embedding of a general semi-separable matrix}
+Let $A$ be a $N \times N$ matrix, whose semi-separable rank is $p$, i.e., we have
+\begin{align}
+A(i,j) & =
+\begin{cases}
+a_{ii} & \text{ if }i=j\\
+\displaystyle\sum_{l=1}^p u_j^{(l)} v_i^{(l)} & \text{ if }i>j\\
+\displaystyle\sum_{l=1}^p u_i^{(l)} v_j^{(l)} & \text{ if }i<j\\
+\end{cases}
+\end{align}
+where $i,j \in \{1,2,\ldots,N\}$. We then add the following variables $r_2^{(p)},r_3^{(p)},\ldots,r_N^{(p)}$ and $l_1^{(p)},l_2^{(p)},\ldots,l_{N-1}^{(p)}$ as before. However, unlike earlier and not surprisingly, these new variables $r_i^{(p)}$'s and $l_j^{(p)}$'s will be vectors of length $p$. Let $U_k^{(p)} = \begin{bmatrix} u_k^{(1)} & u_k^{(2)} & u_k^{(3)} & \cdots & u_k^{(p)}\end{bmatrix}$ and $V_k^{(p)} = \begin{bmatrix} v_k^{(1)} & v_k^{(2)} & v_k^{(3)} & \cdots & v_k^{(p)}\end{bmatrix}$. We then have the following relations for the additional vector variables.
+\begin{align}
+r_N^{(p)} = V_N^Tx_N\\
+l_1^{(p)} = U_1^Tx_1
+\end{align} and
+\begin{align}
+r_k^{(p)} & = V_k^T x_k + r_{k+1}^{(p)}\\
+l_k^{(p)} & = U_k^T x_k + l_{k-1}^{(p)}
+\end{align}
+where $k \in \{2,\ldots,N-1\}$. Hence, we now have $(2p+1)N-2p$ variables (this includes the $N$ $x_k$'s, $N-1$ vector variables $r_k^{(p)}$ and $l_k^{(p)}$ of length $p$) and $(2p+1)N-2p$ equations relating them. Therefore, we end up with a $((2p+1)N-2p) \times ((2p+1)N-2p)$ extended sparse matrix, whose bandwidth is $(2p+1)$. This is illustrated in Figure~\ref{fig_rankm_semiseparable} for $10 \times 10$ semi-separable matrix, whose semi-separable rank is $4$.
+\begin{figure}[!htbp]
+\begin{center}
+\includegraphics[scale=0.225]{./images/mtermsemiseparable/mtermsemiseparable_matrix.pdf}
+\end{center}
+\begin{center}
+\includegraphics[scale=1]{./images/colorcode.pdf}
+\end{center}
+\caption{Pictorial description of the extended sparse matrix where $N=10$ and $p=4$. The color code is as follows: }
+\label{fig_rankm_semiseparable}
+\end{figure}
+
+The computational complexity of the algorithm clearly scales as $\mathcal{O}(N)$, since the extended sparse matrix has a bandwidth of $\mathcal{O}(p)$ and the matrix of size $\mathcal{O}(pN) \times \mathcal{O}(pN)$. It is also possible to analyze the scaling with respect to the semi-separable rank $p$, though this is of little practical relevance since $p = \mathcal{O}(1)$ for most interesting semi-separable matrices. A detailed analysis shows that the computational complexity of the algorithm is $\mathcal{O}(p^2N)$. Numerical benchmarks presented in Section~\ref{section_nb} validate the scaling of the algorithm.
+%the  to indicate the scaling of the algorithm is $\mathcal{O}(p^2N)$ instead of $\mathcal{O}(p^3N)$, which is what we would expect, since setting $p=N$, we should get a scaling of $\mathcal{O}(N^3)$. A detailed analysis of scaling with respect to $p$ can be performed, though is not of immediate relevance, since 
+
+To analyze the scaling with respect to $p$ recall that the computational cost of solving a banded matrix of size $M \times M$, whose bandwidth is $B$ scales as $\mathcal{O}(B^2M)$. Hence, in our case, a naive complexity analysis shows that the scaling of the algorithm is $\mathcal{O}(p^3N)$. However, note that within the band
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%											%
+%	DETERMINANT OF EXTENDED SPARSE MATRIX	%
+%											%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Determinant of extended sparse matrix}
+
+
+\begin{claim}
+The determinant of the extended sparse matrix is the same as the determinant of the original dense matrix up to a sign.
+\end{claim}
+
+The extended system, denoted by $A_{ex}$ on appropriate reordering of rows and columns can be written as
+\begin{align}
+P_1A_{ex} P_2
+\begin{bmatrix}
+l_1^{(p)}\\
+l_2^{(p)}\\
+\vdots\\
+l_{N-1}^{(p)}\\
+r_2^{(p)}\\
+r_3^{(p)}\\
+\vdots\\
+r_N^{(p)}\\
+x_1\\
+x_2\\
+\vdots\\
+x_N
+\end{bmatrix} & =
+\begin{bmatrix}
+I_1 & 0 & U_a\\
+0 & I_2 & V_a\\
+V_b & U_b & D
+\end{bmatrix}
+\begin{bmatrix}
+l_1^{(p)}\\
+l_2^{(p)}\\
+\vdots\\
+l_{N-1}^{(p)}\\
+r_2^{(p)}\\
+r_3^{(p)}\\
+\vdots\\
+r_N^{(p)}\\
+x_1\\
+x_2\\
+\vdots\\
+x_N
+\end{bmatrix}
+\end{align}
+where $P_1$, $P_2$ are permutation matrices, the matrix $I_1$ is a highly sparse lower-triangular matrix with $1$'s on the diagonal and $-1$'s at a few places in the lower-triangular part (the precise location is important for determinant computations as we will see later), the matrix $I_2$ is a highly sparse upper-triangular matrix with $1$'s on the diagonal and $-1$'s at a few places in the upper-triangular part and $D$ is a diagonal matrix. The first set of rows, i.e., $\begin{bmatrix} I_1 & 0 & U_a\end{bmatrix}$, correspond to adding the variables $l_k^{(p)}$, i.e., $l_k^{(p)} = U_k^Tx_k + l_{k-1}^{(p)}$. The next set of rows, i.e., $\begin{bmatrix} 0 & I_2 & V_a\end{bmatrix}$, correspond to adding the variables $r_k^{(p)}$, i.e., $r_k^{(p)} = V_k^Tx_k + r_{k+1}^{(p)}$. The last set of rows, i.e., $\begin{bmatrix} V_b & U_b & D\end{bmatrix}$, correspond to the initial set of equations with the $l_k^{(p)}$'s and $r_k^{(p)}$'s introduced.
+We then have
+\begin{align}
+\det(P_1A_{ex}P_2) & =
+\underbrace{
+\det\left(
+\begin{bmatrix}
+I_1 & 0 & U_a\\
+0 & I_2 & V_a\\
+V_b & U_b & D
+\end{bmatrix}
+\right) =
+\det\left(
+\begin{bmatrix}
+I_1 & 0\\
+0 & I_2
+\end{bmatrix}
+\right)
+\det\left(D-
+\begin{bmatrix}
+U_a\\
+V_a
+\end{bmatrix}
+\begin{bmatrix}
+I_1 & 0\\
+0 & I_2
+\end{bmatrix}^{-1}
+\begin{bmatrix}
+U_b & V_b
+\end{bmatrix}
+\right)
+}_{\text{Block determinant formula}}
+\end{align}
+Now note that $\det(I_1) = 1 = \det(I_2)$, due to the fact that $I_1$ and $I_2$ are triangular matrices with $1$'s on the diagonal. Hence,
+\begin{align}
+\det\left(
+\begin{bmatrix}
+I_1 & 0\\
+0 & I_2
+\end{bmatrix}
+\right) & = \det(I_1) \det(I_2) = 1 \times 1 = 1
+\end{align}
+Further, note that the matrix $D-
+\begin{bmatrix}
+U_a\\
+V_a
+\end{bmatrix}
+\begin{bmatrix}
+I_1 & 0\\
+0 & I_2
+\end{bmatrix}^{-1}
+\begin{bmatrix}
+U_b & V_b
+\end{bmatrix}$ is the Schur complement obtained by eliminating the variables $l_i^{(p)}$, $r_i^{(p)}$ and hence is the initial dense matrix $A$ we began with. Hence, we have
+\begin{align}
+\det(A_{ex}) & = \pm \det(A)
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%										%
+%		SECTION: RYBICKI PRESS			%
+%										%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Reinterpretation of Rybicki Press scheme in terms of sparse embedding}
+
+We will first naively reinterpret the Rybicki Press scheme in terms of the extended sparse matrix algebra. Recall that the Rybicki Press scheme inverts a correlation matrix $A$ given by Equation~\eqref{eqn_Rybicki_Press_matrix}.
+\begin{align}
+A(i,j) & = \exp\left(-\beta \lvert t_i - t_j \rvert\right)
+\label{eqn_Rybicki_Press_matrix}
+\end{align}
+where $t_i$'s lies on an interval and are monotone. The original Rybicki Press algorithm relies on the fact that the inverse of $A$ happens to be a tridiagonal matrix. The key ingredient of their algorithm is the following property of exponentials:
+\begin{align}
+\exp\left(\beta (t_i-t_j) \right)\exp\left(\beta (t_j-t_k) \right) = \exp\left(\beta (t_i-t_k)\right)
+\end{align}
+In our sparse interpretation as well, we will use this property to recognize that the matrix $A$ is a semi-separable matrix, whose semi-separable rank is $1$. This can be seen by setting $u_k = \exp(\beta t_k)$ and $v_k = \exp(-\beta t_k)$. This then gives us ($i<j$) that $A(i,j) = u_i v_j = \exp(\beta t_i) \exp(-\beta t_j) = \exp(\beta(t_i-t_j))$ and similarly for $i>j$. This shows that the matrix $A$ is semi-separable with semi-separable rank $1$. Hence, we can mimic the same approach as in the earlier sections to obtain an $\mathcal{O}(N)$ algorithm. However, there is an issue that needs to be addressed from a numerical perspective. If the $t_i$'s are spread over a large interval, then $u_i$ is exponentially large, while $v_i$ is exponentially small, and hence embedding into a sparse matrix as such could prove to be a catastrophic leading to underflow and overflow of the relevant entries. This issue though can be circumvented by a suitable analytic preconditioning, by an appropriate change of variables. This is illustrated for a $4 \times 4$ linear system. We will use the notation $t_{ij}$ to denote $\lvert t_i - t_j\lvert$. The linear equation is
+\begin{align}
+\begin{bmatrix}
+1 & \exp(-\beta t_{12}) & \exp(-\beta t_{13}) & \exp(-\beta t_{14})\\
+\exp(-\beta t_{12}) & 1 & \exp(-\beta t_{23}) & \exp(-\beta t_{24})\\
+\exp(-\beta t_{13}) & \exp(-\beta t_{23}) & 1 & \exp(-\beta t_{34})\\
+\exp(-\beta t_{14}) & \exp(-\beta t_{24}) & \exp(-\beta t_{34}) & 1\\
+\end{bmatrix}
+\begin{bmatrix}
+x_1\\x_2\\x_3\\x_4
+\end{bmatrix}
+=
+\begin{bmatrix}
+b_1\\b_2\\b_3\\b_4
+\end{bmatrix}
+\end{align}
+Now lets introduce the additional variables as follows:
+\begin{align}
+r_4 & = x_4\\
+r_3 & = x_3 + \exp(-\beta t_{34})r_4\\
+r_2 & = x_2 + \exp(-\beta t_{23})r_3
+\end{align}
+\begin{align}
+l_2 & = x_1\exp(-\beta t_{12})\\
+l_3 & = (x_2+l_2)\exp(-\beta t_{23})\\
+l_4 & = (x_3+l_3)\exp(-\beta t_{34})
+\end{align}
+The equations then become
+\begin{align}
+x_1 + \exp(-\beta t_{12}) r_2 & = b_1\\
+l_2 + x_2 + \exp(-\beta t_{23}) r_3 & = b_2\\
+l_3 + x_3 + \exp(-\beta t_{24}) r_4 & = b_3\\
+l_4 + x_4 & = b_4
+\end{align}
+Embedding this in an extended sparse matrix, we obtain
+\begin{align}
+\begin{bmatrix}
+1 & \exp(-\beta t_{12}) & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+\exp(-\beta t_{12}) & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+0 & -1 & 0 & 1 & \exp(-\beta t_{23}) & 0 & 0 & 0 & 0 & 0\\
+0 & 0 & 1 & 1 & \exp(-\beta t_{23}) & 0 & 0 & 0 & 0 & 0\\
+0 & 0 & \exp(-\beta t_{23}) & \exp(-\beta t_{23}) & 0 & -1 & 0 & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & -1 & 0 & 1 & \exp(-\beta t_{34}) & 0 & 0\\
+0 & 0 & 0 & 0 & 0 & 1 & 1 & \exp(-\beta t_{34}) & 0 & 0\\
+0 & 0 & 0 & 0 & 0 & \exp(-\beta t_{34}) & \exp(-\beta t_{34}) & 0 & -1 & 0\\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 1\\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1\\
+\end{bmatrix}
+\begin{bmatrix}
+x_1\\ r_2\\ l_1\\ x_2\\ r_3\\ l_2\\ x_3\\ r_4\\ l_3\\ x_4
+\end{bmatrix}
+=
+\begin{bmatrix}
+b_1\\ 0\\ 0\\ b_2\\ 0\\ 0\\ b_3\\ 0\\ 0\\ b_4
+\end{bmatrix}
+\end{align}
+
+Note that the sparsity pattern of the matrix is the same as before, which is to be expected, since all we have done essentially is to scale elements appropriately and hence the zero fill-ins remain the same.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%												%
+%		SECTION: GENERALIZED RYBICKI PRESS		%
+%												%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Numerically stable generalized Rybicki Press}
+The same idea carries over the generalized Rybicki Press scheme, i.e., if we consider a CARMA($p$,$q$) process which has the covariance matrix given by
+\begin{align}
+K(r) & =
+\begin{cases}
+d & \text{if } r=0\\
+\displaystyle \sum_{l=1}^p \alpha_l(p,q) \exp(-\beta_l r) & \text{if }r >0
+\end{cases}
+\end{align}
+then it immediately follows that that the matrix is semi-separable with semi-separable rank being $p$. To avoid numerical overflow and underflow, as shown in the previous section, appropriate sets of variables need to be introduced. Let
+\begin{align}
+\alpha & = \begin{bmatrix} \alpha_1 & \alpha_2 & \cdots & \alpha_p\end{bmatrix}^T
+\end{align}
+and
+\begin{align}
+\gamma_k & = \begin{bmatrix}\exp(-\beta_1 t_{k,k+1})& \exp(-\beta_2 t_{k,k+1}) & \cdots& \exp(-\beta_p t_{k,k+1}) \end{bmatrix}^T
+\end{align}
+Now introduce the variables
+\begin{align}
+r_k & = \alpha x_k + D_{k,k+1} r_{k+1}
+\label{eqn_defn_rk}
+\end{align}
+\begin{align}
+l_{k} & = \gamma_{k-1} x_{k-1} + D_{k-1,k}l_{k-1}
+\label{eqn_defn_lk}
+\end{align}
+where $k \in \{2,3,\ldots,N\}$, with $r_{N+1} = l_1 = 0$ and $D_{k,k+1}$ is a $p \times p$ diagonal matrix, with its diagonal being $\gamma_k$. The initial equations become
+\begin{align}
+\alpha^T l_k + dx_k + \gamma_k^T r_{k+1} = b_k
+\label{eqn_defn_xk}
+\end{align}
+where $k \in \{1,2,\ldots,N\}$. Now form the extended sparse matrix using the variables $x_k,l_k$ and $r_k$, with the equations being Equations~\eqref{eqn_defn_rk},~\eqref{eqn_defn_lk},~\eqref{eqn_defn_xk}. The sparsity pattern of the extended sparse matrix is the same and hence the computational complexity scales as $\mathcal{O}(N)$.
+
+\section{Numerical benchmarks}
+\label{section_nb}
+We present a few numerical benchmarks illustrating the scaling of the algorithm and the error. In all these benchmarks, the semi-separable matrix is of the form
+\begin{align}
+A(i,j) =
+\begin{cases}
+d & \text{if }i=j\\
+\displaystyle \sum_{l=1}^p \alpha_l \exp\left(-\beta_l \lvert t_i-t_j\rvert\right) & \text{if }i \neq j
+\end{cases}
+\end{align}
+where the $t_i$'s lie on a on-dimensional manifold and are sorted in increasing fashion. Apart from the time taken for the assembly, factorization and solve, the absolute error, i.e., $\Vert Ax-b \Vert_{\infty}$ is also presented. For the purposes of benchmark, $t_i$'s are chosen at random from the interval $[0,20]$ and then sorted; $\alpha_l$'s, $\beta_l$'s are chosen at random from the interval $[0,2]$; and $d$ is set equal to $1+\displaystyle \sum_{l=1}^p \alpha_l$. Throughout the benchmarks the original dense matrix will be referred to as $A$, while the corresponding extended sparse matrix will be referred to as $A_{ex}$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%						%
+%	FIRST BENCHMARK		%
+%						%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Benchmark $1$} 
+In this benchmark, we illustrate the linear scaling of the algorithm with the number of unknowns $N$ for different choices of $p$. The extended sparse linear system, i.e., $A_{ex}x_{ex} = b_{ex}$ is solved using the sparse LU factorization (SparseLU) in Eigen~\cite{eigenweb}. This is compared with the partial pivoted LU algorithm (PartialPivLU) in Eigen~\cite{eigenweb} to solve the initial dense linear system $Ax=b$. Table~\ref{table_N_scaling} shows the scaling of the algorithm and the maximum error in the residual for a fixed semi-separable rank of $p=5$.
+
+%%%%%%%%%%%%%%%%%
+%	TABLE 1		%
+%%%%%%%%%%%%%%%%%
+\begin{table}[!htbp]
+\rowcolors{1}{gray!30}{white}
+\caption{Scaling of the algorithm with system size $N$ for a fixed semi-separable rank $p=5$. The time taken is reported in seconds.}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+System size& \multicolumn{6}{c|}{Time taken in seconds} & \multicolumn{2}{c|}{Maximum error}\\
+\hline
+$N$ & \multicolumn{2}{c|}{Assembly} & \multicolumn{2}{c|}{Factorize} & \multicolumn{2}{c|}{Solve} & \multicolumn{2}{c|}{in residual}\\
+\hline
+ & Usual & Fast & Usual & Fast & Usual & Fast & Usual & Fast\\
+\hline
+$500$ & $1.55 \times 10^{-2}$ & $1.15 \times 10^{-3}$ & $1.2 \times 10^{-2}$ & $8\times 10^{-3}$ & $2.33 \times 10^{-4}$ & $1.36 \times 10^{-3}$ & $2 \times 10^{-14}$ & $2.2 \times 10^{-15}$\\
+\hline
+$1000$ & $4.92 \times 10^{-2}$ & $1.73 \times 10^{-3}$ & $9.16 \times 10^{-2}$ & $1.55 \times 10^{-2}$ & $8.62 \times 10^{-4}$ & $2.02 \times 10^{-3}$ & $4 \times 10^{-14}$ & $3.8 \times 10^{-15}$\\
+\hline
+$2000$ & $1.88 \times 10^{-1}$ & $3.28 \times 10^{-3}$ & $6.43 \times 10^{-1}$ & $3.08 \times 10^{-2}$ & $2.80 \times 10^{-3}$ & $4.41 \times 10^{-3}$ & $9 \times 10^{-14}$ & $5.6 \times 10^{-15}$\\
+\hline
+$5000$ & $1.15 \times 10^{+0}$ & $9.11 \times 10^{-3}$ & $9.36 \times 10^{+0}$ & $8.31 \times 10^{-2}$ & $1.44 \times 10^{-2}$ & $1.04 \times 10^{-2}$ & $2 \times 10^{13}$ & $6.4 \times 10^{-15}$\\
+\hline
+$10000$ & $4.76 \times 10^{+0}$ & $2.05 \times 10^{-2}$ & $7.19 \times 10^{+1}$ & $1.67 \times 10^{-1}$ & $5.81 \times 10^{-2}$ & $2.05 \times 10^{-2}$ & $3 \times 10^{-13}$ & $8.0 \times 10^{-15}$\\
+\hline
+$20000$ & $-$ & $4.91 \times 10^{-2}$ & $-$ & $3.33 \times 10^{-1}$ & $-$ & $4.29 \times 10^{-2}$ & $-$ & $1.0 \times 10^{-14}$\\
+\hline
+$50000$ & $-$ & $1.16 \times 10^{-1}$ & $-$ & $8.38 \times 10^{-1}$ & $-$ & $1.08 \times 10^{-1}$ & $-$ & $1.5 \times 10^{-14}$\\
+\hline
+$100000$ & $-$ & $2.16 \times 10^{-1}$ & $-$ & $1.68 \times 10^{+0}$ & $-$ & $2.13 \times 10^{-1}$ & $-$ & $1.8 \times 10^{-14}$\\
+\hline
+$200000$ & $-$ & $4.41 \times 10^{-1}$ & $-$ & $3.38 \times 10^{+0}$ & $-$ & $4.25 \times 10^{-1}$ & $-$ & $2.6 \times 10^{-14}$\\
+\hline
+$500000$ & $-$ & $1.33 \times 10^{+0}$ & $-$ & $8.50 \times 10^{+0}$ & $-$ & $1.07 \times 10^{+0}$ & $-$ & $3.4 \times 10^{-14}$\\
+\hline
+$1000000$ & $-$ & $2.70 \times 10^{+0}$ & $-$ & $1.76 \times 10^{+1}$ & $-$ & $2.33 \times 10^{+0}$ & $-$ & $3.9 \times 10^{-14}$\\
+\hline
+\end{tabular}
+\end{center}
+\label{table_N_scaling}
+\end{table}
+Figure~\ref{figure_benchmark1} illustrates the scaling of the assembly, factorization and solve time with system size.
+\begin{itemize}
+\item
+Assembly time - Time taken to assemble the extended sparse matrix.
+\item
+Factorization time - Time taken to factorize the extended sparse matrix.
+\item
+Solve time - Time taken to solve the linear system (once the factorization has been obtained).
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%
+%	FIGURE 1	%
+%%%%%%%%%%%%%%%%%
+\begin{figure}[!htbp]
+\subfigure[Assembly time versus system size]{
+\includegraphics{./images/results/assembly_versus_N.pdf}
+}\subfigure[Factor time versus system size]{
+\includegraphics{./images/results/factor_versus_N.pdf}
+}
+\subfigure[Solve time versus system size]{
+\includegraphics{./images/results/solve_versus_N.pdf}
+}
+\subfigure[Error versus system size]{
+\includegraphics{./images/results/error_versus_N.pdf}
+}
+\caption{Scaling of the algorithm with system size. From the benchmarks, it is clear that the computational cost for the fast algorithm scales as $\mathcal{O}(N)$ for assembly, factorization and solve stages, where $N$ is the number of unknowns. The maximum residual is less than $10^{-13}$ even for a system with million unknowns.}
+\label{figure_benchmark1}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%						%
+%	SECOND BENCHMARK	%
+%						%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Benchmark $2$}
+In this benchmark, we illustrate the scaling of the time taken (assembly, factorization and solve) for algorithm with $p$, the number of exponentials added (equivalently the semi-separable rank).
+
+%%%%%%%%%%%%%%%%%
+%	FIGURE 2	%
+%%%%%%%%%%%%%%%%%
+\begin{figure}[!htbp]
+\subfigure[Assembly time versus number of exponentials]{
+\includegraphics{./images/results/assembly_versus_m.pdf}
+}\subfigure[Factor time versus number of exponentials]{
+\includegraphics{./images/results/factor_versus_m.pdf}
+}
+\subfigure[Solve time versus number of exponentials]{
+\includegraphics{./images/results/solve_versus_m.pdf}
+}
+\subfigure[Error versus number of exponentials]{
+\includegraphics{./images/results/error_versus_m.pdf}
+}
+\caption{Scaling of the fast algorithm with the number of exponentials added. From the benchmarks, it is clear that the computational cost for the fast algorithm scales as $\mathcal{O}(p)$ for assembly and solve stages, while it scales as $\mathcal{O}(p^2)$ for the factorization stage, where $p$ is the number of exponentials (equivalently the semi-separable rank). The maximum residual is less than $10^{-13}$ almost always.}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%
+%				%
+%	CONCLUSION	%
+%				%
+%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+The article discusses a numerically stable, generalized Rybicki Press scheme, which relies on the fact that a semi-separable matrix can be embedded into a larger banded matrix. This enables $\mathcal{O}(N)$ inversion and determinant computation of covariance matrices, whose entries are sums of exponentials. This publication also serves to formally announce the release of the implementation of the extended sparse semi-separable factorization and the generalized Rybicki Press scheme. The implementation is in C++ and is made available at \url{https://github.com/sivaramambikasaran/ESS}~\cite{ambikasaran2014ESS} under the MIT license.
+
+\FloatBarrier
+
+%%%%%%%%%%%%%%%%%%%%%
+%					%
+%	BIBLIOGRAPHY	%
+%					%
+%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+\bibliography{biblio.bib}
+\bibliographystyle{unsrt}
+
+\end{document}
