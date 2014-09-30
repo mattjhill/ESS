@@ -249,7 +249,7 @@ where $k \in \{2,\ldots,N-1\}$. Hence, we now have $(2p+1)N-2p$ variables (this 
 The computational complexity of the algorithm clearly scales as $\mathcal{O}(N)$, since the extended sparse matrix has a bandwidth of $\mathcal{O}(p)$ and the matrix of size $\mathcal{O}(pN) \times \mathcal{O}(pN)$. It is also possible to analyze the scaling with respect to the semi-separable rank $p$, though this is of little practical relevance since $p = \mathcal{O}(1)$ for most interesting semi-separable matrices. A detailed analysis shows that the computational complexity of the algorithm is $\mathcal{O}(p^2N)$. Numerical benchmarks presented in Section~\ref{section_nb} validate the scaling of the algorithm.
 %the  to indicate the scaling of the algorithm is $\mathcal{O}(p^2N)$ instead of $\mathcal{O}(p^3N)$, which is what we would expect, since setting $p=N$, we should get a scaling of $\mathcal{O}(N^3)$. A detailed analysis of scaling with respect to $p$ can be performed, though is not of immediate relevance, since 
 
-To analyze the scaling with respect to $p$ recall that the computational cost of solving a banded matrix of size $M \times M$, whose bandwidth is $B$ scales as $\mathcal{O}(B^2M)$. Hence, in our case, a naive complexity analysis shows that the scaling of the algorithm is $\mathcal{O}(p^3N)$. However, note that within the band
+% To analyze the scaling with respect to $p$ recall that the computational cost of solving a banded matrix of size $M \times M$, whose bandwidth is $B$ scales as $\mathcal{O}(B^2M)$. Hence, in our case, a naive complexity analysis shows that the scaling of the algorithm is $\mathcal{O}(p^3N)$. However, note that within the band
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -302,7 +302,7 @@ x_2\\
 x_N
 \end{bmatrix}
 \end{align}
-where $P_1$, $P_2$ are permutation matrices, the matrix $I_1$ is a highly sparse lower-triangular matrix with $1$'s on the diagonal and $-1$'s at a few places in the lower-triangular part (the precise location is important for determinant computations as we will see later), the matrix $I_2$ is a highly sparse upper-triangular matrix with $1$'s on the diagonal and $-1$'s at a few places in the upper-triangular part and $D$ is a diagonal matrix. The first set of rows, i.e., $\begin{bmatrix} I_1 & 0 & U_a\end{bmatrix}$, correspond to adding the variables $l_k^{(p)}$, i.e., $l_k^{(p)} = U_k^Tx_k + l_{k-1}^{(p)}$. The next set of rows, i.e., $\begin{bmatrix} 0 & I_2 & V_a\end{bmatrix}$, correspond to adding the variables $r_k^{(p)}$, i.e., $r_k^{(p)} = V_k^Tx_k + r_{k+1}^{(p)}$. The last set of rows, i.e., $\begin{bmatrix} V_b & U_b & D\end{bmatrix}$, correspond to the initial set of equations with the $l_k^{(p)}$'s and $r_k^{(p)}$'s introduced.
+where $P_1$, $P_2$ are permutation matrices, the matrix $I_1$ is a highly sparse lower-triangular matrix with $1$'s on the diagonal and $-1$'s at a few places in the lower-triangular part (the precise location is unimportant for determinant computations as we will see later), the matrix $I_2$ is a highly sparse upper-triangular matrix with $1$'s on the diagonal and $-1$'s at a few places in the upper-triangular part and $D$ is a diagonal matrix. The first set of rows, i.e., $\begin{bmatrix} I_1 & 0 & U_a\end{bmatrix}$, correspond to adding the variables $l_k^{(p)}$, i.e., $l_k^{(p)} = U_k^Tx_k + l_{k-1}^{(p)}$. The next set of rows, i.e., $\begin{bmatrix} 0 & I_2 & V_a\end{bmatrix}$, correspond to adding the variables $r_k^{(p)}$, i.e., $r_k^{(p)} = V_k^Tx_k + r_{k+1}^{(p)}$. The last set of rows, i.e., $\begin{bmatrix} V_b & U_b & D\end{bmatrix}$, correspond to the initial set of equations with the $l_k^{(p)}$'s and $r_k^{(p)}$'s introduced.
 We then have
 \begin{align}
 \det(P_1A_{ex}P_2) & =
@@ -368,7 +368,7 @@ U_b & V_b
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Reinterpretation of Rybicki Press algorithm in terms of sparse embedding}
 
-We will first naively reinterpret the Rybicki Press algorithm in terms of the extended sparse matrix algebra. Recall that the Rybicki Press algorithm inverts a correlation matrix $A$ given by Equation~\eqref{eqn_Rybicki_Press_matrix}.
+We will first naively reinterpret the Rybicki Press algorithm in terms of the extended sparse matrix algebra. Recall that the Rybicki Press algorithm~\cite{rybicki1995class} inverts a correlation matrix $A$ given by Equation~\eqref{eqn_Rybicki_Press_matrix}.
 \begin{align}
 A(i,j) & = \exp\left(-\beta \lvert t_i - t_j \rvert\right)
 \label{eqn_Rybicki_Press_matrix}
@@ -611,6 +611,7 @@ The article discusses a numerically stable, generalized Rybicki Press algorithm,
 \newpage
 % \bibliography{biblio}
 % \bibliographystyle{unsrt}
+
 \begin{thebibliography}{10}
 
 \bibitem{asplund1959finite}
@@ -724,12 +725,17 @@ Sivaram Ambikasaran.
 \newblock {ESS}.
 \newblock https://github.com/sivaramambikasaran/ESS, 2014.
 
+\bibitem{rybicki1995class}
+George~B Rybicki and William~H Press.
+\newblock Class of fast methods for processing irregularly sampled or otherwise
+  inhomogeneous one-dimensional data.
+\newblock {\em Physical review letters}, 74(7):1060, 1995.
+
 \bibitem{eigenweb}
 Ga\"{e}l Guennebaud, Beno\^{i}t Jacob, et~al.
 \newblock Eigen v3.
 \newblock http://eigen.tuxfamily.org, 2010.
 
 \end{thebibliography}
-
 
 \end{document}
