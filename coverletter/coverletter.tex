@@ -1,0 +1,35 @@
+\documentclass[a4paper,10pt]{letter}
+% Some of the article customisations are relevant for this class
+\usepackage{setspace}
+\usepackage{fullpage}
+\usepackage{hyperref}
+\address{Sivaram Ambikasaran\\
+Courant Institute of Mathematical Sciences\\
+New York University\\
+251 Mercer Street\\
+New York, N.Y. 10012-1185\\
+sivaram@cims.nyu.edu\\
+650-996-0909}
+\date{\today}
+% Alternatively, these may be set on an individual basis within each letter environment.
+
+%\makelabels % this command prints envelope labels on the final page of the document
+
+\begin{document}
+
+\begin{letter}{Panayot S. Vassilevski\\
+Editor-in-Chief\\
+Numerical Linear Algebra with Applications}
+
+\opening{Dear Editor,} % eg Hello.
+
+\onehalfspacing
+
+I am submitting a manuscript titled {\em Generalized Rybicki Press algorithm}. This manuscript discusses an $\mathcal{O}(N)$, direct, numerically stable algorithm for inverting covariance matrices, whose entries are obtained as sum of exponentials. The algorithm is in-fact true for a large class of structured dense matrices known as semi-separable matrices. This manuscript also serves to formally announce the release of the implementation of the $\mathcal{O}(N)$ solver for semi-separable matrices made available at the following repository: \url{https://github.com/sivaramambikasaran/ESS}.
+
+\closing{Regards,\\
+Sivaram Ambikasaran}
+
+
+\end{letter}
+\end{document}

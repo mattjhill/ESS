@@ -51,6 +51,7 @@ This article discusses a more general and numerically stable Rybicki Press algor
 \end{abstract}
 
 \begin{keywords}
+Semi-separable matrices, Rybicki Press algorithm, fast direct solver, fast determinant computation
 \end{keywords}
 
 
@@ -82,7 +83,7 @@ A new $\mathcal{O}(N)$ direct solver for semi-separable matrices is obtained by 
 \item
 The determinant of these semi-separable matrix is shown to equal to the determinant of the larger banded matrix, thereby enabling computing determinants of these semi-separable matrices at a computational cost of $\mathcal{O}(N)$. This is the first algorithm for computing the determinants for a general semi-separable matrix.
 \item
-A numerically stable generalized Rybicki Press algorithm is derived using these ideas. To be specific, fast direct solver and stable, fast determinant computation (both scaling as $\mathcal{O}(n)$) for covariance matrix of the form:
+A numerically stable generalized Rybicki Press algorithm is derived using these ideas. To be specific, fast, stable, direct algorithms are derived for solving and computing determinants (both scaling as $\mathcal{O}(n)$) for covariance matrices of the form:
 \begin{align}
 A_{ij} = \sum_{l=1}^p \alpha_l \exp\left(-\beta_l \vert t_i - t_j \vert\right)
 \label{eqn_covariance_matrix}
@@ -92,7 +93,7 @@ where $i,j \in \{1,2,\ldots,n\}$, the points $t_i$ are distinct and are distribu
 Another advantage of this algorithm from a practical view-point is that the algorithm relies only on sparse linear algebra and thereby can easily use the existing mature sparse linear algebra libraries.
 \end{itemize}
 
-The algorithm proposed in this article relies on two key ideas: (i) The covariance matrix in Equation~\eqref{eqn_covariance_matrix} is a semi-separable matrix with semi-separable rank $p$; (ii) Fast algorithms for solving and computing determinants for such semi-separable matrices can be obtained by embedding the dense covariance matrix in a large sparse banded matrix. The article also discusses how to perform the entire procedure in a numerically stable fashion. The implementation is made available at \url{https://github.com/sivaramambikasaran/ESS}~\cite{ambikasaran2014ESS} under the license provided by New York University.
+The algorithm discussed in this article has been implemented in C++ and the implementation is made available at \url{https://github.com/sivaramambikasaran/ESS}~\cite{ambikasaran2014ESS} under the license provided by New York University.
 
 \textbf{Acknowledgements}: The author would like to thank Christopher S. Kochanek for initiating the conversation on generalized Rybicki Press algorithm and David W. Hogg for putting in touch with Christopher S. Kochanek. The research was supported in part by the NYU-AIG Partnership on Innovation for Global Resilience under grant number A2014-005. The author was also supported in part by the Applied Mathematical Sciences Program of the U.S. Department of Energy under Contract DEFGO288ER25053, Office of the Assistant Secretary of Defense for Research and Engineering and AFOSR under NSSEFF Program Award FA9550-10-1-0180.
 
@@ -225,7 +226,7 @@ a_{ii} & \text{ if }i=j\\
 \displaystyle\sum_{l=1}^p u_i^{(l)} v_j^{(l)} & \text{ if }i<j\\
 \end{cases}
 \end{align}
-where $i,j \in \{1,2,\ldots,N\}$. We then add the following variables $r_2^{(p)},r_3^{(p)},\ldots,r_N^{(p)}$ and $l_1^{(p)},l_2^{(p)},\ldots,l_{N-1}^{(p)}$ as before. However, unlike earlier and not surprisingly, these new variables $r_i^{(p)}$'s and $l_j^{(p)}$'s will be vectors of length $p$. Let $U_k^{(p)} = \begin{bmatrix} u_k^{(1)} & u_k^{(2)} & u_k^{(3)} & \cdots & u_k^{(p)}\end{bmatrix}$ and $V_k^{(p)} = \begin{bmatrix} v_k^{(1)} & v_k^{(2)} & v_k^{(3)} & \cdots & v_k^{(p)}\end{bmatrix}$. We then have the following relations for the additional vector variables.
+where $i,j \in \{1,2,\ldots,N\}$. We then add the following variables $r_2^{(p)},r_3^{(p)},\ldots,r_N^{(p)}$ and $l_1^{(p)},l_2^{(p)},\ldots,l_{N-1}^{(p)}$ as before. However, not surprisingly, these new variables $r_i^{(p)}$'s and $l_j^{(p)}$'s will be vectors of length $p$. Let $U_k^{(p)} = \begin{bmatrix} u_k^{(1)} & u_k^{(2)} & u_k^{(3)} & \cdots & u_k^{(p)}\end{bmatrix}$ and $V_k^{(p)} = \begin{bmatrix} v_k^{(1)} & v_k^{(2)} & v_k^{(3)} & \cdots & v_k^{(p)}\end{bmatrix}$. We then have the following relations for the additional vector variables.
 \begin{align}
 r_N^{(p)} = V_N^Tx_N\\
 l_1^{(p)} = U_1^Tx_1
