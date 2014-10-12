@@ -1,7 +1,6 @@
-<img style="float: right" src="https://github.com/sivaramambikasaran/ESS/raw/master/display.png" />
-
 ESS
 ===
+<img style="float: right" src="https://github.com/sivaramambikasaran/ESS/raw/master/display.png" />
 
 Extended SemiSeparable solver, which scales as O(N). The algorithm relies on embedding the semi-separable structure in an extended sparse matrix.
 
