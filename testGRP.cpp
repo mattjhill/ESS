@@ -37,10 +37,10 @@ void get_Solution(const Eigen::PartialPivLU<Eigen::MatrixXd> lu_decomp, const Ei
 
 int main(int argc, char* argv[]) {
 
-    Eigen::initParallel();
-    int n       =   atoi(argv[4]);
-    Eigen::setNbThreads(n);
-
+    // Eigen::initParallel();
+    // int n       =   atoi(argv[4]);
+    // Eigen::setNbThreads(n);
+    //
 	//	Number of unknowns is 'N'
 	int N	=	atoi(argv[1]);
 
