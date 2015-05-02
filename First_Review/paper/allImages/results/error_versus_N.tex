@@ -1,0 +1,42 @@
+\documentclass{standalone}
+\usepackage{tikz,pgfplots}
+\pgfplotsset{compat=newest}
+\begin{document}
+
+\begin{tikzpicture}
+\begin{loglogaxis}[
+	xlabel={System size},
+	ylabel={Maximum residual, i.e., $\Vert Ax-b \Vert_{\infty}$},
+	xmin=500, xmax=1000000,
+	ymin=1e-16, ymax=1e-13,
+	legend style={
+  		at={(1.0,0.0)},
+		anchor=south east},
+]
+%Fast m=1
+\addplot
+coordinates{
+(500, 4.44089e-16) (1000, 6.66134e-16) (2000, 6.66134e-16) (5000, 1.33227e-15) (10000, 1.33227e-15) (20000, 1.77636e-15) (50000, 2.66454e-15) (100000, 2.66454e-15) (200000, 5.32907e-15) (500000, 5.32907e-15) (1000000, 7.10543e-15) 
+};
+\addlegendentry{Fast $p=1$}
+%Fast m=2
+\addplot
+coordinates{
+(500, 1.11022e-15) (1000, 1.33227e-15) (2000, 1.55431e-15) (5000, 2.44249e-15) (10000, 2.66454e-15) (20000, 3.88578e-15) (50000, 5.32907e-15) (100000, 7.10543e-15) (200000, 7.32747e-15) (500000, 1.19904e-14) (1000000, 1.37668e-14) 
+};
+\addlegendentry{Fast $p=2$}
+%Fast m=5
+\addplot
+coordinates{
+(500, 2.22045e-15) (1000, 3.77476e-15) (2000, 5.55112e-15) (5000, 6.43929e-15) (10000, 7.99361e-15) (20000, 1.04361e-14) (50000, 1.53211e-14) (100000, 1.84297e-14) (200000, 2.55351e-14) (500000, 3.44169e-14) (1000000, 3.86358e-14) 
+};
+\addlegendentry{Fast $p=5$}
+%Fast m=10
+\addplot
+coordinates{
+(500, 3.66374e-15) (1000, 5.32907e-15) (2000, 6.32827e-15) (5000, 1.17684e-14) (10000, 1.14353e-14) (20000, 1.35447e-14) (50000, 2.37588e-14) (100000, 2.5091e-14) (200000, 3.15303e-14) (500000, 4.75175e-14) (1000000, 5.55112e-14) 
+};
+\addlegendentry{Fast $p=10$}
+\end{loglogaxis}
+\end{tikzpicture}
+\end{document}

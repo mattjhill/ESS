@@ -1,0 +1,62 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\newcommand\N{2}
+\newcommand\M{3}
+\newcommand\NM{1}
+\newcommand\radius{0.25}
+\begin{document}
+\begin{tikzpicture}
+
+\draw [fill=red] (2,0) circle (\radius);
+\draw [<->,shorten >= 2pt] (1.75,\radius) to[in=45,out=135] (2.25,\radius);
+% \foreach \i in {0,...,\N} {
+% 	\draw [fill=red](2*\i,0) circle (\radius);
+% }
+%
+% \foreach \i in {1,...,\N} {
+% 	\node at (2*\i-2,-2*\radius) {$x_\i^{(m)}$};
+% 	\node at (2*\i-1,-1-2*\radius) {$l_\i^{(m)}$};
+% }
+%
+% \foreach \i in {2,...,\M} {
+% 	\node at (2*\i-3,1+2*\radius) {$r_\i^{(m)}$};
+% }
+%
+% \foreach \i in {1,...,\N} {
+% 	\draw [fill=red](2*\i,0) circle (\radius);
+% }
+% \foreach \i in {0,...,\NM} {
+% 	\draw [fill=orange](2*\i+1,1) circle (\radius);
+% 	\draw [fill=yellow](2*\i+1,-1) circle (\radius);
+% }
+% \foreach \i in {0,...,\N} {
+% 	\draw [ultra thick, blue, <->] (2*\i+0.5*\radius,0.5*\radius) -- (2*\i+1-0.5*\radius,1-0.5*\radius);
+% 	\draw [ultra thick, blue, <->] (2*\i+0.5*\radius,-0.5*\radius) -- (2*\i+1-0.5*\radius,-1+0.5*\radius);
+% }
+% \foreach \i in {0,...,\NM} {
+% 	\draw [ultra thick, blue, <->] (2*\i+1+0.5*\radius,1) -- (2*\i+3-0.5*\radius,1);
+% 	\draw [ultra thick, blue, <->] (2*\i+1+0.5*\radius,1-0.5*\radius) -- (2*\i+2-0.5*\radius,0+0.5*\radius);
+% 	\draw [ultra thick, blue, <->] (2*\i+1+0.5*\radius,-1) -- (2*\i+3-0.5*\radius,-1);
+% 	\draw [ultra thick, blue, <->] (2*\i+1+0.5*\radius,-1+0.5*\radius) -- (2*\i+2-0.5*\radius,0-0.5*\radius);
+% }
+% \draw [fill=black] (2*\N+1.5,0) circle (0.2*\radius);
+% \draw [fill=black] (2*\N+2,0) circle (0.2*\radius);
+% \draw [fill=black] (2*\N+2.5,0) circle (0.2*\radius);
+%
+% \draw [fill=red](2*\N+6,0) circle (\radius);
+% \draw [fill=orange](2*\N+5,1) circle (\radius);
+% \draw [fill=yellow](2*\N+5,-1) circle (\radius);
+% \draw [ultra thick, blue, <->] (2*\N+3+0.5*\radius,1) -- (2*\N+5-0.5*\radius,1);
+% \draw [ultra thick, blue, <->] (2*\N+5+0.5*\radius,1-0.5*\radius) -- (2*\N+6-0.5*\radius,0+0.5*\radius);
+% \draw [ultra thick, blue, <->] (2*\N+3+0.5*\radius,-1) -- (2*\N+5-0.5*\radius,-1);
+% \draw [ultra thick, blue, <->] (2*\N+5+0.5*\radius,-1+0.5*\radius) -- (2*\N+6-0.5*\radius,0-0.5*\radius);
+% \draw [ultra thick, blue, <->] (2*\N+4+0.5*\radius,0.5*\radius) -- (2*\N+5-0.5*\radius,1-0.5*\radius);
+% \draw [ultra thick, blue, <->] (2*\N+4+0.5*\radius,-0.5*\radius) -- (2*\N+5-0.5*\radius,-1+0.5*\radius);
+%
+% \node at (2*\N+6,-2*\radius) {$x_{N}^{(m)}$};
+% \node at (2*\N+5,-1-2*\radius) {$l_{N-1}^{(m)}$};
+% \node at (2*\N+5,1+2*\radius) {$r_{N}^{(m)}$};
+
+\end{tikzpicture}
+\end{document}

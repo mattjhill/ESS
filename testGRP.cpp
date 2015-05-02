@@ -73,50 +73,6 @@ int main(int argc, char* argv[]) {
 	Eigen::VectorXd solution;
 	double start, end;
 
-	Eigen::MatrixXd A;
-	/****************************/
-	/*							*/
-	/*	Direct factorization	*/
-	/*							*/
-	/****************************/
-
-	if (c=='y') {
-
-		Eigen::PartialPivLU<Eigen::MatrixXd> lu_decomp;
-
-		double assembleTime, factorTime, solveTime;
-
-		std::cout << std::endl << "Usual method..." << std::endl;
-
-		//	Assembles the matrix
-        start   = omp_get_wtime();
-		assemble_Matrix(N, m, alpha, beta, t, d, A);
-        end     = omp_get_wtime();
-		assembleTime=	(end-start);
-		std::cout << std::setw(30) << "Assembly time: " << std::setw(10) << 1000*assembleTime << std::endl;
-
-
-		//	Obtains the factorization
-        start   = omp_get_wtime();
-		get_Exact_Factorization(A, lu_decomp);
-        end     = omp_get_wtime();
-		factorTime	=	(end-start);
-		std::cout << std::setw(30) << "Factor time: " << std::setw(10) << 1000*factorTime << std::endl;
-
-
-		//	Obtains the solution
-        start   = omp_get_wtime();
-		get_Solution(lu_decomp, rhs, solution);
-        end     = omp_get_wtime();
-		solveTime	=	(end-start);
-		std::cout << std::setw(30) << "Solve time: " << std::setw(10) << 1000*solveTime << std::endl << std::endl;
-        
-        //	Error in the computed solution
-        double usualError   =   (A*solution-rhs).cwiseAbs().maxCoeff();
-        std::cout << std::setw(30) << "Maximum of ||Ax-b|| is: " << std::setw(10) << usualError << std::endl << std::endl;
-	}
-
-
 	/************************/
 	/*						*/
 	/*	Fast factorization	*/
@@ -125,7 +81,7 @@ int main(int argc, char* argv[]) {
 
 
 	Eigen::VectorXd solutionFast, solex;
-	double assembleFastTime, factorFastTime, solveFastTime;
+	double assembleFastTime, factorFastTime, solveFastTime, determinantTime;
 
 	//	Set up the ESS class.
 	GRP matrix(N, m, alpha, beta, t, d);
@@ -157,13 +113,65 @@ int main(int argc, char* argv[]) {
 	double error 	=	matrix.obtain_Error(rhs, solex);
     std::cout << std::setw(30) << "Maximum of ||Ax-b|| is: " << std::setw(10) << error << std::endl << std::endl;
 
-	/************************/
-	/*						*/
-	/*	Compare solutions	*/
-	/*						*/
-	/************************/
+	//	Obtain the determinant of the extended sparse system
+	start	=	omp_get_wtime();
+	double logAbsdeterminantFast	=	matrix.obtain_Determinant();
+	end		=	omp_get_wtime();
+	determinantTime	=	(end-start);
+	std::cout << std::setw(30) << "LogAbsDeterminant is: " << std::setw(10) << logAbsdeterminantFast << std::endl << std::endl;
+	std::cout << std::setw(30) << "Determinant time: " << std::setw(10) << 1000*determinantTime << std::endl << std::endl;
+
+	/************************************************/
+	/*												*/
+	/*	Direct factorization and compare solutions	*/
+	/*												*/
+	/************************************************/
 
 	if (c=='y') {
+		Eigen::MatrixXd A;
+		Eigen::PartialPivLU<Eigen::MatrixXd> lu_decomp;
+
+		double assembleTime, factorTime, solveTime, determinantTime;
+
+		std::cout << std::endl << "Usual method..." << std::endl;
+
+		//	Assembles the matrix
+        start   = omp_get_wtime();
+		assemble_Matrix(N, m, alpha, beta, t, d, A);
+        end     = omp_get_wtime();
+		assembleTime=	(end-start);
+		std::cout << std::setw(30) << "Assembly time: " << std::setw(10) << 1000*assembleTime << std::endl;
+
+
+		//	Obtains the factorization
+        start   = omp_get_wtime();
+		get_Exact_Factorization(A, lu_decomp);
+        end     = omp_get_wtime();
+		factorTime	=	(end-start);
+		std::cout << std::setw(30) << "Factor time: " << std::setw(10) << 1000*factorTime << std::endl;
+
+
+		//	Obtains the solution
+        start   = omp_get_wtime();
+		get_Solution(lu_decomp, rhs, solution);
+        end     = omp_get_wtime();
+		solveTime	=	(end-start);
+		std::cout << std::setw(30) << "Solve time: " << std::setw(10) << 1000*solveTime << std::endl << std::endl;
+        
+        //	Error in the computed solution
+        double usualError   =   (A*solution-rhs).cwiseAbs().maxCoeff();
+        std::cout << std::setw(30) << "Maximum of ||Ax-b|| is: " << std::setw(10) << usualError << std::endl << std::endl;
+
+		//	Determinant
+		start	=	omp_get_wtime();
+
+		double logAbsdeterminantExact	=	log(fabs(lu_decomp.determinant()));
+		end		=	omp_get_wtime();
+		determinantTime	=	(end-start);
+		std::cout << std::setw(30) << "LogAbsDeterminant is: " << std::setw(10) << logAbsdeterminantExact << std::endl << std::endl;
+		std::cout << std::setw(30) << "Determinant time: " << std::setw(10) << 1000*determinantTime << std::endl << std::endl;
+
 		std::cout << std::endl << "Error in solution: "<< (solutionFast-solution).cwiseAbs().maxCoeff() << std::endl << std::endl;
+		std::cout << std::endl << "Error in LogAbsDeterminant: " << fabs(logAbsdeterminantFast-logAbsdeterminantExact)/fabs(logAbsdeterminantExact) << std::endl << std::endl;
 	}
 }

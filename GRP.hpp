@@ -21,6 +21,7 @@ class GRP {
 	Eigen::VectorXd t;
 	Eigen::MatrixXd gamma;
 	double d;	//	Diagonal entry of the matrix.
+	double determinant;	//	Determinant of the extended sparse matrix.
 
 	int M;								//	Size of the extended sparse matrix.
 	int blocknnz;						//	Number of non-zeros per block.
@@ -40,6 +41,7 @@ public:
 	void factorize_Extended_Matrix();                       //	Factorizes the extended sparse matrix.
 	void obtain_Solution(const Eigen::VectorXd rhs, Eigen::VectorXd& solution, Eigen::VectorXd& solutionex);	//	Obtains the solution.
 	double obtain_Error(const Eigen::VectorXd rhs, const Eigen::VectorXd& solex);	//	Obtain error, i.e., ||Ax-b||_{\inf}
+	double obtain_Determinant();	//	Obtains the determinant of the extended sparse matrix.
 };
 
 GRP::GRP (const int N, const int m, const Eigen::VectorXd alpha, const Eigen::VectorXd beta, const Eigen::VectorXd t, const double d) {
@@ -144,6 +146,12 @@ double GRP::obtain_Error(const Eigen::VectorXd rhs, const Eigen::VectorXd& solex
 	}
 	double error	=	(Aex*solex-rhsex).cwiseAbs().maxCoeff();
 	return error;
+}
+
+double GRP::obtain_Determinant() {
+	//	Obtain determinant
+	determinant	=	factorize.logAbsDeterminant();
+	return determinant;
 }
 
 #endif /* defined(__GRP_HPP__) */

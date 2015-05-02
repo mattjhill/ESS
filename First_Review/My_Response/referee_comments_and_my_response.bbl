@@ -1,0 +1,34 @@
+\begin{thebibliography}{1}
+
+\bibitem{eigenweb}
+Ga\"{e}l Guennebaud, Beno\^{i}t Jacob, et~al.
+\newblock Eigen v3.
+\newblock http://eigen.tuxfamily.org, 2010.
+
+\bibitem{demmel1999supernodal}
+James~W Demmel, Stanley~C Eisenstat, John~R Gilbert, Xiaoye~S Li, and Joseph~WH
+  Liu.
+\newblock A supernodal approach to sparse partial pivoting.
+\newblock {\em SIAM Journal on Matrix Analysis and Applications},
+  20(3):720--755, 1999.
+
+\bibitem{demmel2011superlu}
+James~W Demmel.
+\newblock Superlu users' guide.
+\newblock {\em Lawrence Berkeley National Laboratory}, 2011.
+
+\bibitem{li2005overview}
+Xiaoye~S Li.
+\newblock An overview of superlu: Algorithms, implementation, and user
+  interface.
+\newblock {\em ACM Transactions on Mathematical Software (TOMS)},
+  31(3):302--325, 2005.
+
+\bibitem{davis2004algorithm}
+Timothy~A Davis, John~R Gilbert, Stefan~I Larimore, and Esmond~G Ng.
+\newblock Algorithm 836: Colamd, a column approximate minimum degree ordering
+  algorithm.
+\newblock {\em ACM Transactions on Mathematical Software (TOMS)},
+  30(3):377--380, 2004.
+
+\end{thebibliography}

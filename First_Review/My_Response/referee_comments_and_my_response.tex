@@ -1,0 +1,99 @@
+\documentclass{article}
+\usepackage[left=0.5in,top=0.5in,right=0.5in,bottom=0.5in]{geometry}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{listings}
+
+\lstset{%
+  language=[LaTeX]TeX,
+  backgroundcolor=\color{gray!15},
+  basicstyle=\footnotesize,
+  breaklines=true,
+  columns=fullflexible,
+  breakindent=0pt
+}
+
+\title{Generalized Rybicki Press Algorithm}
+\author{Sivaram Ambikasaran}
+\date{\today}
+\begin{document}
+\maketitle
+\noindent Dear Editor and Reviewer,
+
+I would like to thank you both for your careful evaluation of my manuscript. The reviewer's detailed evaluation of the paper and his comments have certainly helped me improve the paper. I quote the comments from the Reviewers and discuss the changes I have made as a result. {\color{blue}My responses are colored in blue}.
+
+\noindent\rule{16cm}{0.4pt}
+
+\noindent
+\textbf{Referee $1$}:
+
+
+In the manuscript \emph{Generalized Rybicki Press Algorithm} the author describes a fast ($\mathcal{O}(N)$) direct solver for semi-separable matrices with fixed ($\mathcal{O}(1)$) semi-separable rank $p$. The main idea is to embed the semiseparable matrix into a larger banded matrix of size $\mathcal{O}(pN)$ and band $\mathcal{O}(p)$, for which fast direct solver are avaialable. The main application of the method described in the manuscript is in the context of Continuous time AutoRegressive-Moving-Average (CARMA) models, for the solution of linear system and the computation of determinants of dense covariance matrices of the form
+$$A_{ij} = \sum_{l=1}^p \exp\left(\beta_l \vert t_i-t_j\vert\right)$$
+
+I would be happy to reccomend this manuscript for publication with minor revisions.
+
+\hrulefill
+
+\begin{enumerate}
+	\item
+	In Equation $(4.1)$, the notation $I_1$ and $I_2$ may be misleading since $I$ usually denotes the identity matrix, while $I_1$ and $I_2$ are indeed triangular matrices.\\
+	{\color{blue}\textbf{Response}: This is a valid remark. I have changed the notations appropriately. $I_1,I_2$ which initially denoted a lower and upper triangular matrix respectively have now been changed to $L_{\Delta}$ and $U_{\Delta}$ respectively.}
+
+\hrulefill
+
+	\item
+	In Formula $(4.1)$, is the diagonal matrix $D$ such that $D_{ii} = a_{ii}$? If so, please make it more explicit, if not please provide the exact formula.\\
+	{\color{blue}\textbf{Response}: This has now been addressed. As the reviewer has rightly observed, $D_{ii} = a_{ii}$. A line indicating this has been added to the article as follows: \color{red}{``... and $D$ is a diagonal matrix with $D_{ii} = a_{ii}$."}}
+
+\hrulefill
+
+	
+	\item
+	In Equation $(4.2)$, the Schur complement matrix should read
+	$$D-
+	\begin{bmatrix} V_b & U_b \end{bmatrix} \begin{bmatrix} I_1 & 0\\ 0 & I_2\end{bmatrix}^{-1}
+	\begin{bmatrix} U_a\\ V_a \end{bmatrix}$$
+	{\color{blue}\textbf{Response}: Thanks for pointing this out. This has been changed at all the places the mistake was made. Also, now $I_1,I_2$ has been replaced by $L_{\Delta},U_{\Delta}$ as addressed in the first comment.}
+
+\hrulefill
+
+	
+	\item
+	In Claim 4.1, since the author wrote that the Schur complement of $A_{ex}$ is equal to $A$, should not be $\det(A_{ex}) = \det(A)$ without ambiguity on the signum? Otherwise, if the Schur Complement of $A_{ex}$ is $-A$, then we have $\det(A_{ex}) = \det(A)$ if the size of $A$ is even, and $\det(A_{ex}) = −\det(A)$ if the size of $A$ is odd.\\
+	{\color{blue}\textbf{Response}: Kindly note that Claim $4.1$ states that the determinant are equal upto a sign. It is to be noted that the Schur complement of $P_1A_{ex}P_2$ (not of $A_{ex}$) is $A$, where $P_1$ and $P_2$ are permutation matrices as mentioned in Section $4$. Hence, we can only conclude that $\det(A_{ex}) = \pm \det(A)$, where the ambiguity in the sign arises due to the permutation matrices. This has been elaborated a bit towards the end of Section $4$.}
+
+\hrulefill
+
+	
+	\item
+	In Section $7.1$, please provide more details regarding the algorithm used to perform the sparse LU factorization of $A_{ex}$. Is $A_{ex}$ stored in CSR format or skyline format (i.e. the banded matrix format in LAPACK)? Is pivoting allowed in this sparse factorization? If so, does it preserve the banded structure? If not, is the factorization backward stable?\\
+	{\color{blue}\textbf{Response}: Thanks for raising the important issue. The below paragraph has been added at the beginning of Section $7$, which should hopefully clarify this.
+	
+\color{red}{``The extended sparse linear system, i.e., $A_{ex}x_{ex} = b_{ex}$, is solved using the sparse LU factorization (SparseLU) in Eigen~\cite{eigenweb}. This relies on the sequential SuperLU package~\cite{demmel1999supernodal, demmel2011superlu, li2005overview}, which performs sparse LU decomposition with partial pivoting. The preordering of the unknowns is performed using the COLAMD method~\cite{davis2004algorithm}. It is to be noted that despite the preordering and partial pivoting, which inturn affects the banded structure, the computational cost as shown in Figures for the extended sparse system scales linearly in the number of unknowns. The extended sparse matrix is stored using a triplet list in Eigen~\cite{eigenweb}, which internally converts it into compressed column/row storage format."}}
+
+
+\hrulefill
+
+	\item
+	In Table $7.1$, it would be interesting to compare the determinats computed using the usual and the fast method.\\
+	{\color{blue}\textbf{Response}: The relative error in computing the log-determinant has now been added to Table $7.1$. Note that the timings are now reported in milli-seconds in this table instead of seconds as in the original manuscript. This was done to generate some space to add the column for the relative error in computing the log-determinant.}
+
+\hrulefill
+
+	\item
+	In Table $7.1$, and also below formula $(7.1)$, I would suggest to write infinity norm of the residual instead of absolute error.\\
+	{\color{blue}\textbf{Response}: Absolute error has been replaced by infinity norm of the residual at all places in the article.}
+
+\hrulefill
+
+	\item
+	Please add a reference in the text for Fig. $7.1$ and Fig. $7.2$.\\
+	{\color{blue}\textbf{Response}: This has also been fixed now. Couple of sentence to Section 7.2 has been added, where the reference to the Figures have been mentioned.}
+
+\hrulefill
+\end{enumerate}
+
+\bibliography{./../paper/biblio.bib}
+\bibliographystyle{unsrt}
+\end{document}
