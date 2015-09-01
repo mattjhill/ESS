@@ -11,10 +11,10 @@
 
 //using namespace std;
 
-void assemble_Matrix(const int N, const int m, const Eigen::VectorXd alpha, const Eigen::VectorXd beta, const Eigen::VectorXd t, double d, Eigen::MatrixXd& A) {
+void assemble_Matrix(const int N, const int m, const Eigen::VectorXd alpha, const Eigen::VectorXd beta, const Eigen::VectorXd t, const Eigen::VectorXd d, Eigen::MatrixXd& A) {
 	A	=	Eigen::MatrixXd(N,N);
 	for (int i=0;i<N;++i) {
-		A(i,i)	=	d;
+		A(i,i)	=	d(i);
 		for (int j=i+1;j<N;++j) {
 			A(i,j)	=	0;
 			for (int p=0;p<m;++p) {
@@ -37,10 +37,10 @@ void get_Solution(const Eigen::PartialPivLU<Eigen::MatrixXd> lu_decomp, const Ei
 
 int main(int argc, char* argv[]) {
 
-    // Eigen::initParallel();
-    // int n       =   atoi(argv[4]);
-    // Eigen::setNbThreads(n);
-    //
+	// Eigen::initParallel();
+	// int n       =   atoi(argv[4]);
+	// Eigen::setNbThreads(n);
+	//
 	//	Number of unknowns is 'N'
 	int N	=	atoi(argv[1]);
 
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 	Eigen::VectorXd beta		=	Eigen::VectorXd::Ones(m)+Eigen::VectorXd::Random(m);
 
 //  double d    =   alpha.sum();
-    Eigen::VectorXd d	=	Eigen::VectorXd::Constant(alpha.sum()+1.0);
+	Eigen::VectorXd d	=	Eigen::VectorXd::Constant(N, alpha.sum()+1.0);
 //	double d	=	1.0;
 
 	Eigen::VectorXd t	=	Eigen::VectorXd::Random(N);
@@ -89,29 +89,29 @@ int main(int argc, char* argv[]) {
 	std::cout << std::endl << "Fast method.." << std::endl;
 
 	//	Assemble the matrix.
-    start   = omp_get_wtime();
+	start   = omp_get_wtime();
 	matrix.assemble_Extended_Matrix();
-    end     = omp_get_wtime();
+	end     = omp_get_wtime();
 	assembleFastTime=	(end-start);
 	std::cout << std::setw(30) << "Assembly time: " << std::setw(10) << 1000*assembleFastTime << std::endl;
 
 	//	Factorize the matrix.
-    start   = omp_get_wtime();
+	start   = omp_get_wtime();
 	matrix.factorize_Extended_Matrix();
-    end     = omp_get_wtime();
+	end     = omp_get_wtime();
 	factorFastTime	=	(end-start);
 	std::cout << std::setw(30) << "Factor time: " << std::setw(10) << 1000*factorFastTime << std::endl;
 
 	//	Solve the linear system
-    start   = omp_get_wtime();
+	start   = omp_get_wtime();
 	matrix.obtain_Solution(rhs, solutionFast,solex);
-    end     = omp_get_wtime();
+	end     = omp_get_wtime();
 	solveFastTime	=	(end-start);
 	std::cout << std::setw(30) << "Solve time: " << std::setw(10) << 1000*solveFastTime << std::endl << std::endl;
 
 	//	Error in the computed solution
 	double error 	=	matrix.obtain_Error(rhs, solex);
-    std::cout << std::setw(30) << "Maximum of ||Ax-b|| is: " << std::setw(10) << error << std::endl << std::endl;
+	std::cout << std::setw(30) << "Maximum of ||Ax-b|| is: " << std::setw(10) << error << std::endl << std::endl;
 
 	//	Obtain the determinant of the extended sparse system
 	start	=	omp_get_wtime();
@@ -131,37 +131,36 @@ int main(int argc, char* argv[]) {
 		Eigen::MatrixXd A;
 		Eigen::PartialPivLU<Eigen::MatrixXd> lu_decomp;
 
-		double d_in = alpha.sum()+1.0
 		double assembleTime, factorTime, solveTime, determinantTime;
 
 		std::cout << std::endl << "Usual method..." << std::endl;
 
 		//	Assembles the matrix
-        start   = omp_get_wtime();
-		assemble_Matrix(N, m, alpha, beta, t, d_in, A);
-        end     = omp_get_wtime();
+		start   = omp_get_wtime();
+		assemble_Matrix(N, m, alpha, beta, t, d, A);
+		end     = omp_get_wtime();
 		assembleTime=	(end-start);
 		std::cout << std::setw(30) << "Assembly time: " << std::setw(10) << 1000*assembleTime << std::endl;
 
 
 		//	Obtains the factorization
-        start   = omp_get_wtime();
+		start   = omp_get_wtime();
 		get_Exact_Factorization(A, lu_decomp);
-        end     = omp_get_wtime();
+		end     = omp_get_wtime();
 		factorTime	=	(end-start);
 		std::cout << std::setw(30) << "Factor time: " << std::setw(10) << 1000*factorTime << std::endl;
 
 
 		//	Obtains the solution
-        start   = omp_get_wtime();
+		start   = omp_get_wtime();
 		get_Solution(lu_decomp, rhs, solution);
-        end     = omp_get_wtime();
+		end     = omp_get_wtime();
 		solveTime	=	(end-start);
 		std::cout << std::setw(30) << "Solve time: " << std::setw(10) << 1000*solveTime << std::endl << std::endl;
-        
-        //	Error in the computed solution
-        double usualError   =   (A*solution-rhs).cwiseAbs().maxCoeff();
-        std::cout << std::setw(30) << "Maximum of ||Ax-b|| is: " << std::setw(10) << usualError << std::endl << std::endl;
+		
+		//	Error in the computed solution
+		double usualError   =   (A*solution-rhs).cwiseAbs().maxCoeff();
+		std::cout << std::setw(30) << "Maximum of ||Ax-b|| is: " << std::setw(10) << usualError << std::endl << std::endl;
 
 		//	Determinant
 		start	=	omp_get_wtime();
