@@ -20,7 +20,7 @@ class GRP {
 	Eigen::VectorXd beta;
 	Eigen::VectorXd t;
 	Eigen::MatrixXd gamma;
-	double d;	//	Diagonal entry of the matrix.
+	Eigen::VectorXd d;	//	Diagonal entry of the matrix.
 	double determinant;	//	Determinant of the extended sparse matrix.
 
 	int M;								//	Size of the extended sparse matrix.
@@ -35,7 +35,7 @@ class GRP {
 	Eigen::SparseLU<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int> > factorize;		//	Stores the factorization.
 
 public:
-	GRP(const int N, const int m, const Eigen::VectorXd alpha, const Eigen::VectorXd beta, const Eigen::VectorXd t, const double d);                        //	Constructor gets all the desired quantities.
+	GRP(const int N, const int m, const Eigen::VectorXd alpha, const Eigen::VectorXd beta, const Eigen::VectorXd t, const Eigen::VectorXd d);                        //	Constructor gets all the desired quantities.
 	void assemble_Extended_Matrix();                        //	Assembles the extended sparse matrix.
 	void change_Diagonal(const Eigen::VectorXd diagonal);	//	Updates the diagonal alone.
 	void factorize_Extended_Matrix();                       //	Factorizes the extended sparse matrix.
@@ -44,7 +44,7 @@ public:
 	double obtain_Determinant();	//	Obtains the determinant of the extended sparse matrix.
 };
 
-GRP::GRP (const int N, const int m, const Eigen::VectorXd alpha, const Eigen::VectorXd beta, const Eigen::VectorXd t, const double d) {
+GRP::GRP (const int N, const int m, const Eigen::VectorXd alpha, const Eigen::VectorXd beta, const Eigen::VectorXd t, const Eigen::VectorXd d) {
 	/************************************************/
 	/*												*/
 	/*	Assign all the variables inside the class.	*/
@@ -89,7 +89,7 @@ void GRP::assemble_Extended_Matrix() {
 	for (int nBlock=0; nBlock<N-1; ++nBlock) {
 		//	The starting row and column for the blocks.
 		//	Assemble the diagonal first.
-		triplets.push_back(Eigen::Triplet<double>(nBlockStart[nBlock], nBlockStart[nBlock], d));
+		triplets.push_back(Eigen::Triplet<double>(nBlockStart[nBlock], nBlockStart[nBlock], d(nBlock)));
 		for (int k=0; k<m; ++k) {
 			triplets.push_back(Eigen::Triplet<double>(nBlockStart[nBlock]+k+1,nBlockStart[nBlock],gamma(k,nBlock)));
 			triplets.push_back(Eigen::Triplet<double>(nBlockStart[nBlock],nBlockStart[nBlock]+k+1,gamma(k,nBlock)));
@@ -99,7 +99,7 @@ void GRP::assemble_Extended_Matrix() {
 			triplets.push_back(Eigen::Triplet<double>(nBlockStart[nBlock]+k+m+1,nBlockStart[nBlock]+k+1,-1.0));
 		}
 	}
-	triplets.push_back(Eigen::Triplet<double>(M-1,M-1,d));
+	triplets.push_back(Eigen::Triplet<double>(M-1,M-1,d(N-1)));
 
 	//	Assebmles the supersuperdiagonal identity blocks.
 	for (int nBlock=0; nBlock<N-2; ++nBlock) {
