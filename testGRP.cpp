@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 	Eigen::VectorXd beta		=	Eigen::VectorXd::Ones(m)+Eigen::VectorXd::Random(m);
 
 //  double d    =   alpha.sum();
-    double d	=	alpha.sum()+1.0;
+    Eigen::VectorXd d	=	Eigen::VectorXd::Constant(alpha.sum()+1.0);
 //	double d	=	1.0;
 
 	Eigen::VectorXd t	=	Eigen::VectorXd::Random(N);
@@ -131,13 +131,14 @@ int main(int argc, char* argv[]) {
 		Eigen::MatrixXd A;
 		Eigen::PartialPivLU<Eigen::MatrixXd> lu_decomp;
 
+		double d_in = alpha.sum()+1.0
 		double assembleTime, factorTime, solveTime, determinantTime;
 
 		std::cout << std::endl << "Usual method..." << std::endl;
 
 		//	Assembles the matrix
         start   = omp_get_wtime();
-		assemble_Matrix(N, m, alpha, beta, t, d, A);
+		assemble_Matrix(N, m, alpha, beta, t, d_in, A);
         end     = omp_get_wtime();
 		assembleTime=	(end-start);
 		std::cout << std::setw(30) << "Assembly time: " << std::setw(10) << 1000*assembleTime << std::endl;
