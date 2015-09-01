@@ -43,7 +43,7 @@ Then run the executable with the number of unknowns and rank of the semi-separab
 where `N` is the number of unknowns, `m` is the rank of semi-separability, i.e., the number of exponential sums in the covariance matrix and `c` is a character to denote, if we want to compare with usual method or not. The covariance matrix is of the form
 
 	K(i,j) = sum_k a_kexp(-b_k|t_i-t_j|)	when i != j
-	K(i,j) = d						 		when i = j
+	K(i,j) = d(i)						 	when i = j
 
 The timestamps `t_i`, `a_k`, `b_k`, `d` are chosen at random. To change the code, to get your desired covariance matrix, edit the file `testGRP.cpp`. The lines you might need to change include the definition of the vectors `alpha` (i.e., `a_k`'s), `beta` (i.e., `b_k`'s), `t` (i.e., the time stamps), the diagonal `d` and the right hand side `rhs`.
 
