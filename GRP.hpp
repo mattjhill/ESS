@@ -36,6 +36,7 @@ class GRP {
 
 public:
 	GRP(const int N, const int m, const Eigen::VectorXd alpha, const Eigen::VectorXd beta, const Eigen::VectorXd t, const Eigen::VectorXd d);                        //	Constructor gets all the desired quantities.
+	~GRP();
 	void assemble_Extended_Matrix();                        //	Assembles the extended sparse matrix.
 	void change_Diagonal(const Eigen::VectorXd diagonal);	//	Updates the diagonal alone.
 	void factorize_Extended_Matrix();                       //	Factorizes the extended sparse matrix.
@@ -57,6 +58,8 @@ GRP::GRP (const int N, const int m, const Eigen::VectorXd alpha, const Eigen::Ve
 	this->t		=	t;
 	this->d		=	d;
 }
+
+GRP::~GRP() {}
 
 void GRP::assemble_Extended_Matrix() {
 	gamma		=	Eigen::MatrixXd(m,N-1);
